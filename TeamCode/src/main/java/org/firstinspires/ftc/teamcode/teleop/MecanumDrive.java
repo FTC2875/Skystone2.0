@@ -44,7 +44,10 @@ public class MecanumDrive extends OpMode {
     Servo flipper2;
 
         //flipper boolean
-    private boolean flippeddown = false;
+
+    boolean flipped = false;
+    int liftstage = 0;
+    int armpos = 0;
 
     @Override
     public void init() {
@@ -66,8 +69,6 @@ public class MecanumDrive extends OpMode {
 
 
 
-
-
             //configure motors
         front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -77,6 +78,7 @@ public class MecanumDrive extends OpMode {
 
             //need to code in lift positions
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override
@@ -84,38 +86,50 @@ public class MecanumDrive extends OpMode {
 
         //Strafing and rotation definition
         double strafey  = gamepad1.left_stick_y;
-        double strafex = gamepad1.left_stick_x;
-        double turn  = gamepad1.right_stick_x;
+        double strafex = -gamepad1.left_stick_x;
+        double turn  = -gamepad1.right_stick_x;
 
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe
-        double strafeMag = 0.3 * Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
+        double strafeMag = 0.7 * Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
         //0.7 is correction factor, max val is 1.414, .7 is p=1
 
         //set motor power to calculated values
 
-        double frPower = Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag + turn;
-        double blPower = -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag + turn;
-        double flPower = -Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag + turn; //+ turn
-        double brPower = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag + turn;
+        double frPower = -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag + turn;
+        double blPower = -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag - turn;
+        double flPower = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag + turn; //+ turn
+        double brPower = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag - turn;
         double max = Math.max(Math.abs(blPower),Math.abs(flPower));
-        double powerFactor = -0.6;
+        double powerFactor = 1;
 
-        front_right.setPower(powerFactor * frPower/max);
-        back_left.setPower(powerFactor * blPower/max);
+//        if (gamepad1.dpad_up) {front_left.setPower(1);}
+//        if (gamepad1.dpad_right) {front_right.setPower(1);}
+//        if (gamepad1.dpad_down) {back_right.setPower(1);}
+//        if (gamepad1.dpad_left) {back_left.setPower(1);}
 
-        //right side is reversed because wheels are mounted in other direction
-        front_left.setPower(powerFactor * flPower/max);
-        back_right.setPower(powerFactor * brPower/max);
+        front_right.setPower(powerFactor * frPower/2);
+        back_left.setPower(powerFactor * blPower/2);
+//
+//        //right side is reversed because wheels are mounted in other direction
+        front_left.setPower(powerFactor * flPower/2);
+        back_right.setPower(powerFactor * brPower/2);
+//
+//        front_left.setPower(strafey + turn + strafex);
+//        back_left.setPower(strafey + turn - strafex);
+//        front_right.setPower(strafey - turn - strafex);
+//        back_right.setPower(strafey - turn + strafex);
 
 
         //foundation flippers
-        flippeddown = gamepad2.right_bumper ? !flippeddown : flippeddown;
 
-        if(gamepad2.y) {
+
+        if(gamepad2.y) {flipped = true;}
+        if (flipped = true) {
             flipper1.setPosition(0.8);
             flipper2.setPosition(0.8);
         }
-        if (gamepad2.x) {
+        if (gamepad2.x) {flipped = false;}
+        if (flipped = false){
             flipper1.setPosition(0);
             flipper2.setPosition(0);
         }
@@ -136,21 +150,18 @@ public class MecanumDrive extends OpMode {
             intake_right.setPower(0);
         }
 
-        if(gamepad2.right_trigger > 0.05) {
-            intakepower = 0;
-            intake_right.setPower(intakepower);
-            intake_left.setPower(intakepower);
-        }
 
-
-        armjoint.setPosition(-1 * gamepad2.left_stick_x);
-        armbase.setPosition(0.59 + (-1 * gamepad2.right_stick_y)); //default position is 0.59: open
+        armbase.setPosition(0.7 + (-1 * gamepad2.right_stick_y)); //default position is 0.59: open
 
         double liftposition = lift.getCurrentPosition();
 
-        int liftstage = 0;
-        if (gamepad2.dpad_up == true && liftstage <= 4) liftstage = liftstage + 1;
-        if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage = liftstage - 1;
+
+        //if (gamepad2.dpad_up == true && liftstage <= 4) liftstage = liftstage + 1;
+        //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage = liftstage - 1;
+
+
+        if (gamepad2.dpad_left == true) armjoint.setPosition(0.88);
+        if (gamepad2.dpad_right == true) armjoint.setPosition(0);
 
         /*
         switch (liftstage) {
@@ -161,10 +172,11 @@ public class MecanumDrive extends OpMode {
          */
 
 
+
         if(gamepad2.dpad_up == true){
-            lift.setPower(0.5); }
+            lift.setPower(-0.2); }
         else if(gamepad2.dpad_down == true){
-            lift.setPower(-0.5); }
+            lift.setPower(0.1); }
         else {
             lift.setPower(0);
         }
