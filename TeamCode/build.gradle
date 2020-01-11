@@ -16,5 +16,5 @@ dependencies {
      */
     implementation project(':FtcRobotController')
     implementation 'org.openftc:rev-extensions-2:1.2'
-    implementation 'com.acmerobotics.roadrunner:core:0.4.6'
+    //implementation 'com.acmerobotics.roadrunner:core:0.4.6'
 }
