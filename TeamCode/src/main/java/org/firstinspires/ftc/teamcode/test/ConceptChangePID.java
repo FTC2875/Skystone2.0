@@ -1,21 +1,10 @@
-package org.firstinspires.ftc.teamcode;
-
-import android.content.Context;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
-
-import java.io.FileOutputStream;
-import java.io.*;
-
-
-import android.content.Context;
-import android.content.SharedPreferences;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by tom on 9/26/17.
@@ -40,10 +29,7 @@ public class ConceptChangePID extends LinearOpMode {
         // get reference to DC motor.
         // since we are using the Expansion Hub,
         // cast this motor to a DcMotorEx object.
-
-        String motorname = "front_left";
-
-        motorExLeft = (DcMotorEx)hardwareMap.get(DcMotor.class, "front_left");
+        motorExLeft = (DcMotorEx)hardwareMap.get(DcMotor.class, "left_front");
 
         // wait for start command.
         waitForStart();
@@ -57,20 +43,6 @@ public class ConceptChangePID extends LinearOpMode {
 
         // re-read coefficients and verify change.
         PIDCoefficients pidModified = motorExLeft.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        double pidP = pidModified.p;
-        double pidI = pidModified.i;
-        double pidD = pidModified.d;
-        String filename = (motorname);
-        File file = new File(hardwareMap.appContext.getFilesDir(), filename);
-
-//        SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        String keyString = String.join(motorname, "p");
-//        double valueString = Double.toString(pidP);
-//        editor.putString(keyString, valueString);
-//        editor.commit();
-
-
 
         // display info to user.
         while(opModeIsActive()) {

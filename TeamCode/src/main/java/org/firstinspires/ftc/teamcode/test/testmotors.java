@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * This is an example minimal implementation of the mecanum drivetrain
- * for demonstration purposes.  Not tested and not guaranteed to be bug free.
+ *
+ *
  *
  * @author Brandon Gong
  */
@@ -25,83 +25,27 @@ public class testmotors extends OpMode {
      */
 
     // declare and initialize four DcMotors.
-    private DcMotor motor10 = null;
-    private DcMotor motor11 = null;
-    private DcMotor motor12 = null;
-    private DcMotor motor13 = null;
-    private DcMotor motor20 = null;
-    private DcMotor motor21 = null;
-    private DcMotor motor22 = null;
+    private DcMotor front_left = null;
+    private DcMotor front_right = null;
+    private DcMotor back_right = null;
+    private DcMotor back_left = null;
 
     @Override
     public void init() {
 
-        // Name strings must match up with the config on the Robot Controller
-        // app.
-        motor10 = hardwareMap.get(DcMotor.class, "motor10");
-        motor11 = hardwareMap.get(DcMotor.class, "motor11");
-        motor12 = hardwareMap.get(DcMotor.class, "motor12");
-        motor13 = hardwareMap.get(DcMotor.class, "motor13");
-        motor20 = hardwareMap.get(DcMotor.class, "motor20");
-        motor21 = hardwareMap.get(DcMotor.class, "motor21");
-        motor22 = hardwareMap.get(DcMotor.class, "motor22");
+
+        front_left = hardwareMap.get(DcMotor.class, "front_left");
+        front_right = hardwareMap.get(DcMotor.class, "front_right");
+        back_right = hardwareMap.get(DcMotor.class, "back_right");
+        back_left = hardwareMap.get(DcMotor.class, "back_left");
 
     }
     @Override
     public void loop() {
-        motor20.setPower(0.25);
-        telemetry.addData("Motor 20 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor10.setPower(0);
-        motor11.setPower(0.25);
-        telemetry.addData("Motor 11 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor11.setPower(0);
-        motor12.setPower(0.25);
-        telemetry.addData("Motor 12 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor12.setPower(0);
-        motor13.setPower(0.25);
-        telemetry.addData("Motor 13 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor13.setPower(0);
-        motor20.setPower(0.25);
-        telemetry.addData("Motor 20 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor20.setPower(0);
-        motor21.setPower(0.25);
-        telemetry.addData("Motor 21 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor21.setPower(0);
-        motor22.setPower(0.25);
-        telemetry.addData("Motor 22 running", 1);
-        telemetry.update();
-        telemetry.clear();
-        wait(3000);
-        motor22.setPower(0);
-        stop();
+        if (gamepad1.dpad_up) front_left.setPower(1);
+        if (gamepad1.dpad_right) front_right.setPower(1);
+        if (gamepad1.dpad_down) back_right.setPower(1);
+        if (gamepad1.dpad_left) back_left.setPower(1);
+    }
 
-    }
-    public static void wait(int ms){
-        try
-        {
-            Thread.sleep(ms);
-        }
-        catch (InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
-    }
 }
