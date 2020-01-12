@@ -34,10 +34,10 @@ public class testmotors extends OpMode {
     public void init() {
 
 
-        front_left = hardwareMap.get(DcMotor.class, "front_left");
-        front_right = hardwareMap.get(DcMotor.class, "front_right");
-        back_right = hardwareMap.get(DcMotor.class, "back_right");
-        back_left = hardwareMap.get(DcMotor.class, "back_left");
+        front_left = hardwareMap.get(DcMotor.class, "left_front");
+        front_right = hardwareMap.get(DcMotor.class, "right_front");
+        back_right = hardwareMap.get(DcMotor.class, "right_back");
+        back_left = hardwareMap.get(DcMotor.class, "left_back");
 
     }
     @Override

@@ -80,7 +80,11 @@ public class MecanumDrive extends OpMode {
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+//        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -113,7 +117,11 @@ public class MecanumDrive extends OpMode {
         double flPower = posStrafeMath + turn;
         double brPower = posStrafeMath - turn;
         double max = Math.max(Math.abs(blPower),Math.abs(flPower));
+
+        //slow mode
         double powerFactor = 1;
+        if (gamepad1.right_bumper) powerFactor = 0.4;
+        else powerFactor = 1;
 
         //divide by 2 to prevent overflow
         front_right.setPower(powerFactor * frPower/2);
@@ -151,12 +159,11 @@ public class MecanumDrive extends OpMode {
             intakepower = gamepad1.right_trigger;
             intake_left.setPower(intakepower*-1);
             intake_right.setPower(intakepower);
-        }
-        if(gamepad1.left_trigger > 0.1) {
+        }  else if(gamepad1.left_trigger > 0.1) {
             intakepower = gamepad1.left_trigger;
             intake_left.setPower(intakepower);
             intake_right.setPower(intakepower*-1);
-        }else {
+        } else {
             intakepower = 0;
             intake_left.setPower(intakepower);
             intake_right.setPower(intakepower);
@@ -175,18 +182,17 @@ public class MecanumDrive extends OpMode {
         //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage = liftstage - 1;
 
 
-
-
-        /*
         switch (liftstage) {
-        case (0){
-        lift.setTargetPosition();
+            case (0): {
+        lift.setTargetPosition(12);
+        }   case(1): {
+
+            }
         }
-        }
-         */
 
 
-        //lift controls, @power 0 the motor brakes
+
+        //lift controls, @power 0 - the motor brakes
         if(gamepad2.dpad_up == true){
             lift.setPower(-0.2); }
         else if(gamepad2.dpad_down == true){
@@ -199,7 +205,7 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("lift pos: ", liftposition);
         telemetry.addData("liftstage", liftstage);
         telemetry.addData("arm joint: ", armjoint.getPosition());
-
+        telemetry.addData("Power: ", powerFactor);
         telemetry.update();
     }
 }

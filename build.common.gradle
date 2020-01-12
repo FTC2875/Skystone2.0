@@ -109,6 +109,6 @@ repositories {
         dirs rootProject.file('libs')
     }
     jcenter()
-    google()
+    jcenter()
 }
 //apply from: 'build.release.gradle'
