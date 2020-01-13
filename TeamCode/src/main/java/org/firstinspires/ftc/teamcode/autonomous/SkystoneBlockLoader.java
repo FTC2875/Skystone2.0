@@ -20,9 +20,11 @@ SOFTWARE. */
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -31,6 +33,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class SkystoneBlockLoader extends OpMode {
 
     private CameraController cameraContoller;
+    private DrivetrainController drivetrainController;
 
     private enum RobotStates
     {
@@ -62,6 +65,13 @@ public class SkystoneBlockLoader extends OpMode {
         }
 
         cameraContoller = new CameraController(openCvCamera, 640, 480);
+
+        // Define motors
+        drivetrainController = new DrivetrainController(
+                hardwareMap.get(DcMotor.class, "left_front"),
+                hardwareMap.get(DcMotor.class, "right_front"),
+                hardwareMap.get(DcMotor.class, "left_back"),
+                hardwareMap.get(DcMotor.class, "right_back"));
     }
 
     @Override
@@ -71,16 +81,35 @@ public class SkystoneBlockLoader extends OpMode {
         {
             case Undetermined: {
                 // Scan for a block or move to unload it
+                if (drivetrainController.IsMoving()) {
+                    drivetrainController.Stop();
+                }
+
+                drivetrainController.BeginScan(50);
+                break;
             }
-            break;
+
             case ObjectFound: {
                 // Drive to load the block
+                // Scan for a block or move to unload it
+                if (drivetrainController.IsMoving()) {
+                    drivetrainController.Stop();
+                }
+
+                drivetrainController.BeginApproach(50);
+                break;
             }
-            break;
+
             case ObjectLost: {
                 // Stop driving to load the block
+                if (drivetrainController.IsMoving()) {
+                    drivetrainController.Stop();
+                }
+
+                // TODO: Grab the block
+
+                break;
             }
-            break;
         }
     }
 }

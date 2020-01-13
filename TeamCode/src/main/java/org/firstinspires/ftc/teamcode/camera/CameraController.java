@@ -19,7 +19,7 @@ import static org.opencv.core.Core.minMaxLoc;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
 /**
- * Usage: Implements pphone camera control
+ * Usage: Implements camera controller.
  *
  *
  *
