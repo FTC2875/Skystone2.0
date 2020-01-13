@@ -32,9 +32,11 @@ public class FlipperController {
             flipper1.setPosition(0.8);
             flipper2.setPosition(0.8);
         }
-        if (!flipped){
+        else{
             flipper1.setPosition(0);
             flipper2.setPosition(0);
         }
+
+        flipped = !flipped;
     }
 }

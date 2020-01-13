@@ -14,8 +14,7 @@ public class LiftController {
     private DcMotor lift;
     private int liftstage = 0;
 
-    public enum LiftTarget{
-        Stop,
+    public enum Direction {
         Up,
         Down
     }
@@ -29,7 +28,7 @@ public class LiftController {
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void MoveLift(int position, LiftTarget liftTarget) {
+    public void MoveLift(int position, double power, Direction direction) {
         double liftposition = lift.getCurrentPosition();
 
         switch (liftstage) {
@@ -41,19 +40,34 @@ public class LiftController {
         }
 
         //lift controls, @power 0 - the motor brakes
-        switch (liftTarget){
+        switch (direction){
             case Up:
-            lift.setPower(-0.2);
+            lift.setPower(-power);
             break;
 
             case Down:
-            lift.setPower(0.1);
-            break;
-
-            case Stop:
-            lift.setPower(0);
+            lift.setPower(power);
             break;
         }
+    }
 
+    public void Stop() {
+        lift.setPower(0);
+    }
+
+    public void setTargetPosition(int position) {
+        lift.setTargetPosition(position);
+    }
+
+    public double getCurrentPosition() {
+        return lift.getCurrentPosition();
+    }
+
+    public boolean IsMoving() {
+        return lift.isBusy();
+    }
+
+    public DcMotor GetDcMotor() {
+        return lift;
     }
 }

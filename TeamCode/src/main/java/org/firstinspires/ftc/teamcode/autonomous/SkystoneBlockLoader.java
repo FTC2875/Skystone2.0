@@ -110,7 +110,6 @@ public class SkystoneBlockLoader extends OpMode {
 
         liftController = new LiftController(
                 hardwareMap.get(DcMotor.class, "lift"));
-
     }
 
     @Override
@@ -119,7 +118,7 @@ public class SkystoneBlockLoader extends OpMode {
         switch (robotState) {
             case Initialization: {
                 // TODO: do any additional initialization, raise arm, move flpper, etc?
-                // liftController.MoveLift(12, LiftController.LiftTarget.Down);
+                // liftController.MoveLift(12, LiftController.Direction.Down);
 
                 LookForBlock();
                 break;
@@ -257,10 +256,10 @@ public class SkystoneBlockLoader extends OpMode {
 
 //        flipperController.Flip();
 //
-//        liftController.MoveLift(12, LiftController.LiftTarget.Down);
+//        liftController.MoveLift(12, LiftController.Direction.Down);
 //
 //        intakeController.ActuateIntake(0.1, 0);
-//        liftController.MoveLift(12, LiftController.LiftTarget.Up);
+//        liftController.MoveLift(12, LiftController.Direction.Up);
 //
 //        flipperController.Flip();
     }
@@ -291,10 +290,10 @@ public class SkystoneBlockLoader extends OpMode {
             telemetry.addData("Robot: ", "DropBlock");
 
             // TODO: drop the block
-//        liftController.MoveLift(12, LiftController.LiftTarget.Down);
+//        liftController.MoveLift(12, LiftController.Direction.Down);
 //
 //        flipperController.Flip();
-//        liftController.MoveLift(12, LiftController.LiftTarget.Up);
+//        liftController.MoveLift(12, LiftController.Direction.Up);
 //
 //        flipperController.Flip();
 

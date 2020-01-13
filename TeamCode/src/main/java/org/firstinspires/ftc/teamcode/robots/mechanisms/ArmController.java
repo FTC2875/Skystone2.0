@@ -25,6 +25,10 @@ public class ArmController {
         armjoint.setPosition(armJointPosition);
     }
 
+    public double getArmJointPosition() {
+        return armjoint.getPosition();
+    }
+
     public void Raise() {
 
     }

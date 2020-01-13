@@ -5,6 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.IntakeController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.lang.Math;
@@ -26,72 +31,48 @@ import java.lang.Math;
 @TeleOp(name="MecanumDrive", group="Iterative Opmode")
 public class MecanumDrive extends OpMode {
 
-
-        //declare and initialize drive motors
-    DcMotor front_right;
-    DcMotor front_left;
-    DcMotor back_left;
-    DcMotor back_right;
-        //intake
-    DcMotor intake_left;
-    DcMotor intake_right;
+    //drive motors
+    DrivetrainController drivetrainController;
+    //intake
+    IntakeController intakeController;
         //lift
-    DcMotor lift;
+    LiftController lift;
         //arm/gripper
-    Servo armbase;
-    Servo armjoint; //upper near rotation point
+    ArmController armController;
         //foundation movers
-    Servo flipper1;
-    Servo flipper2;
+    FlipperController flipperController;
 
     boolean flipped = false;
     int liftstage = 0;
-    int armpos = 0;
 
     ExpansionHubEx expansionHub;
     ExpansionHubEx expansionHub2;
 
     @Override
     public void init() {
+        drivetrainController = new DrivetrainController(
+                hardwareMap.get(DcMotor.class, "left_front"),
+                hardwareMap.get(DcMotor.class, "right_front"),
+                hardwareMap.get(DcMotor.class, "left_back"),
+                hardwareMap.get(DcMotor.class, "right_back"));
 
-        front_left = hardwareMap.get(DcMotor.class, "left_front");
-        front_right = hardwareMap.get(DcMotor.class, "right_front");
-        back_left = hardwareMap.get(DcMotor.class, "left_back");
-        back_right = hardwareMap.get(DcMotor.class, "right_back");
+        intakeController = new IntakeController(
+                hardwareMap.get(DcMotor.class, "intake_left"),
+                hardwareMap.get(DcMotor.class, "intake_right"));
 
-        intake_left = hardwareMap.get(DcMotor.class, "intake_left");
-        intake_right = hardwareMap.get(DcMotor.class, "intake_right");
+        lift = new LiftController(
+                hardwareMap.get(DcMotor.class, "lift"));
 
-        lift = hardwareMap.get(DcMotor.class, "lift");
-        armbase = hardwareMap.get(Servo.class, "armbase");
-        armjoint  = hardwareMap.get(Servo.class, "armjoint");
+        armController = new ArmController(
+                hardwareMap.get(Servo.class, "armbase"),
+                hardwareMap.get(Servo.class, "armjoint"));
 
-        flipper1 = hardwareMap.get(Servo.class, "flipper1");
-        flipper2 = hardwareMap.get(Servo.class, "flipper2");
-
+        flipperController = new FlipperController(
+                hardwareMap.get(Servo.class, "flipper1"),
+                hardwareMap.get(Servo.class, "flipper2"));
 
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
-
-
-
-            //configure motors
-        front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-//        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        back_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //if motor.setPower(0), set these motors to brake
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
@@ -124,63 +105,57 @@ public class MecanumDrive extends OpMode {
         else powerFactor = 1;
 
         //divide by 2 to prevent overflow
-        front_right.setPower(powerFactor * frPower/2);
-        back_left.setPower(powerFactor * blPower/2);
-        front_left.setPower(powerFactor * flPower/2);
-        back_right.setPower(powerFactor * brPower/2);
+        drivetrainController.SetPower(
+                powerFactor * blPower/2,
+                powerFactor * frPower/2,
+                powerFactor * flPower/2,
+                powerFactor * brPower/2);
 
         //RGB :D
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
 
 
-
 //        if the above doesn't work, use this
-//        front_left.setPower(strafey + turn + strafex);
-//        back_left.setPower(strafey + turn - strafex);
-//        front_right.setPower(strafey - turn - strafex);
-//        back_right.setPower(strafey - turn + strafex);
+//        drivetrainController.SetPower(
+//                strafey + turn + strafex,
+//                strafey - turn - strafex,
+//                strafey + turn - strafex,
+//                strafey - turn + strafex);
 
-
-        //foundation flippers
         if(gamepad2.y) flipped = true;
         if (flipped) {
-            flipper1.setPosition(0.8);
-            flipper2.setPosition(0.8);
+            flipperController.SetPosition(0.8, 0.8);
         }
         if (gamepad2.x) flipped = false;
         if (!flipped){
-            flipper1.setPosition(0);
-            flipper2.setPosition(0);
+            flipperController.SetPosition(0, 0);
         }
 
-        double intakepower = 0;
-        if(gamepad1.right_trigger > 0.1) {
-            intakepower = gamepad1.right_trigger;
-            intake_left.setPower(intakepower*-1);
-            intake_right.setPower(intakepower);
-        }  else if(gamepad1.left_trigger > 0.1) {
-            intakepower = gamepad1.left_trigger;
-            intake_left.setPower(intakepower);
-            intake_right.setPower(intakepower*-1);
-        } else {
-            intakepower = 0;
-            intake_left.setPower(intakepower);
-            intake_right.setPower(intakepower);
+        double leftIntakepower = 0;
+        double rightIntakepower = 0;
+        if (gamepad1.right_trigger > 0.1) {
+            leftIntakepower = -1 * gamepad1.right_trigger;
+            rightIntakepower = gamepad1.right_trigger;
+        }  else if (gamepad1.left_trigger > 0.1) {
+            leftIntakepower = gamepad1.left_trigger;
+            rightIntakepower = -1 * gamepad1.left_trigger;
         }
 
+        intakeController.ActuateIntake(leftIntakepower, rightIntakepower);
 
         //arm control
-        armbase.setPosition(0.7 + (-0.6 * gamepad2.right_stick_y)); //default open position is 0.6
-        if (gamepad2.dpad_left == true) armjoint.setPosition(0.88);
-        if (gamepad2.dpad_right == true) armjoint.setPosition(0);
+        double armjointPosition = 0;
+        if (gamepad2.dpad_left == true) armjointPosition = 0.88;
+        if (gamepad2.dpad_right == true) armjointPosition = 0;
+        armController.SetPosition(
+                0.7 + (-0.6 * gamepad2.right_stick_y),
+                armjointPosition);
 
         double liftposition = lift.getCurrentPosition();
 
-
         //if (gamepad2.dpad_up == true && liftstage <= 4) liftstage = liftstage + 1;
         //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage = liftstage - 1;
-
 
         switch (liftstage) {
             case (0): {
@@ -190,21 +165,19 @@ public class MecanumDrive extends OpMode {
             }
         }
 
-
-
         //lift controls, @power 0 - the motor brakes
         if(gamepad2.dpad_up == true){
-            lift.setPower(-0.2); }
+            lift.MoveLift(12, 0.2, LiftController.Direction.Up); }
         else if(gamepad2.dpad_down == true){
-            lift.setPower(0.1); }
+                lift.MoveLift(12, 0.1, LiftController.Direction.Down);}
         else {
-            lift.setPower(0);
+            lift.Stop();
         }
 
 
         telemetry.addData("lift pos: ", liftposition);
         telemetry.addData("liftstage", liftstage);
-        telemetry.addData("arm joint: ", armjoint.getPosition());
+        telemetry.addData("arm joint: ", armController.getArmJointPosition());
         telemetry.addData("Power: ", powerFactor);
         telemetry.update();
     }
