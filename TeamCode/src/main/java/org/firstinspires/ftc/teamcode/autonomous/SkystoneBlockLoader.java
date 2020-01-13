@@ -29,8 +29,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous
-public class SkystoneBlockLoader extends OpMode {
+@Autonomous public class SkystoneBlockLoader extends OpMode {
 
     private CameraController cameraContoller;
     private DrivetrainController drivetrainController;
@@ -58,11 +57,13 @@ public class SkystoneBlockLoader extends OpMode {
     @Override
     public void init() {
 
+        telemetry.addData("Robot: ", "init0");
         blockCount = 0;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera openCvCamera;
 
+        telemetry.addData("Robot: ", "init1");
         // TODO: Update to use the desired camera
         boolean usePhoneCamera = true;
         if (usePhoneCamera) {
@@ -72,7 +73,10 @@ public class SkystoneBlockLoader extends OpMode {
             openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         }
 
+        telemetry.addData("Robot: ", "init2");
         cameraContoller = new CameraController(openCvCamera, 640, 480);
+
+        telemetry.addData("Robot: ", "init3");
 
         // Define motors
         drivetrainController = new DrivetrainController(
@@ -80,10 +84,14 @@ public class SkystoneBlockLoader extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
                 hardwareMap.get(DcMotor.class, "right_back"));
+
+        telemetry.addData("Robot: ", "init4");
     }
 
     @Override
     public void loop() {
+
+        telemetry.addData("Robot: ", "loop");
 
         switch (robotState) {
             case Initialization: {
