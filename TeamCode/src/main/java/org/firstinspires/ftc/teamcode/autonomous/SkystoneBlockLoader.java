@@ -35,12 +35,18 @@ public class SkystoneBlockLoader extends OpMode {
     private CameraController cameraContoller;
     private DrivetrainController drivetrainController;
 
+    // Count of processed blocks
+    private int blockCount;
+
     private enum RobotStates
     {
         Initialization,
         LookingForBlock,
         ApproachingBlock,
+        GrabBlock,
         UnloadBlock,
+        CycleComplete,
+        Done
     }
 
     RobotStates robotState;
@@ -52,10 +58,12 @@ public class SkystoneBlockLoader extends OpMode {
     @Override
     public void init() {
 
+        blockCount = 0;
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera openCvCamera;
 
-        // Update to use the desired camera
+        // TODO: Update to use the desired camera
         boolean usePhoneCamera = true;
         if (usePhoneCamera) {
             openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -77,12 +85,61 @@ public class SkystoneBlockLoader extends OpMode {
     @Override
     public void loop() {
 
-        if (robotState == RobotStates.Initialization){
-            // TODO: do some initialization
+        switch (robotState) {
+            case Initialization: {
+                // TODO: do any additional initialization, raise grabber?
 
-            LookForBlock();
+                LookForBlock();
+                break;
+            }
+
+            case LookingForBlock: {
+                ProcessCameraState();
+
+                // TODO: if the robot did not find block before it it reached the end of platform, set robotState to Done
+                break;
+            }
+
+            case ApproachingBlock: {
+                ProcessCameraState();
+                break;
+            }
+
+            case GrabBlock: {
+                // Waiting until block is grabbed
+                // TODO: wait until the block is grabbed
+
+                UnloadBlock();
+                break;
+            }
+
+            case UnloadBlock: {
+                // Waiting until the block is unloaded
+                break;
+            }
+
+            case CycleComplete: {
+
+                // Processed a block
+                blockCount++;
+                telemetry.addData("Robot: ", "CycleComplete ", blockCount);
+                LookForBlock();
+                break;
+            }
+
+            case Done: {
+                // TODO: no more blocks, what now?
+                telemetry.addData("Robot: ", "Done");
+                break;
+            }
+
+            default:
+
+                break;
         }
+    }
 
+    private void ProcessCameraState() {
         switch (cameraContoller.State) {
             case Undetermined: {
                 break;
@@ -104,9 +161,7 @@ public class SkystoneBlockLoader extends OpMode {
                     drivetrainController.Stop();
                 }
 
-                // TODO: Grab the block
-
-                UnloadBlock();
+                GrabBlock();
                 break;
             }
         }
@@ -148,6 +203,20 @@ public class SkystoneBlockLoader extends OpMode {
         }
 
         drivetrainController.BeginApproach(50);
+    }
+
+    private void GrabBlock() {
+        if (robotState == RobotStates.GrabBlock) {
+
+            telemetry.addData("Robot: ", "Error: already GrabBlock");
+            return;
+        }
+
+        robotState = RobotStates.GrabBlock;
+
+        telemetry.addData("Robot: ", "GrabBlock");
+
+        // TODO: grab the block
     }
 
     private void UnloadBlock() {
