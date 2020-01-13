@@ -67,24 +67,24 @@ public class SkystoneBlockLoader extends OpMode {
         telemetry.addData("Robot: ", "init1");
         // TODO: Update to use the desired camera
         boolean usePhoneCamera = true;
-        if (usePhoneCamera) {
-            openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        }
-        else {
-            openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        }
+//        if (usePhoneCamera) {
+//            openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+//        }
+//        else {
+//            openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+//        }
 
         telemetry.addData("Robot: ", "init2");
-        cameraContoller = new CameraController(openCvCamera, 640, 480);
+        //cameraContoller = new CameraController(openCvCamera, 640, 480);
 
         telemetry.addData("Robot: ", "init3");
 
         // Define motors
-        drivetrainController = new DrivetrainController(
-                hardwareMap.get(DcMotor.class, "left_front"),
-                hardwareMap.get(DcMotor.class, "right_front"),
-                hardwareMap.get(DcMotor.class, "left_back"),
-                hardwareMap.get(DcMotor.class, "right_back"));
+//        drivetrainController = new DrivetrainController(
+//                hardwareMap.get(DcMotor.class, "left_front"),
+//                hardwareMap.get(DcMotor.class, "right_front"),
+//                hardwareMap.get(DcMotor.class, "left_back"),
+//                hardwareMap.get(DcMotor.class, "right_back"));
 
         telemetry.addData("Robot: ", "init4");
     }
@@ -101,6 +101,16 @@ public class SkystoneBlockLoader extends OpMode {
     public void loop() {
 
         telemetry.addData("Robot: ", "loop");
+
+        if (cameraContoller == null) {
+            telemetry.addData("Robot: ", "cameraContoller");
+            return;
+        }
+
+        if (drivetrainController == null) {
+            telemetry.addData("Robot: ", "drivetrainController");
+            return;
+        }
 
         switch (robotState) {
             case Initialization: {
