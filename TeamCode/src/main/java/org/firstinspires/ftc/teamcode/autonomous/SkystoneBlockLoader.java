@@ -40,7 +40,7 @@ public class SkystoneBlockLoader extends OpMode {
         Initialization,
         LookingForBlock,
         ApproachingBlock,
-        MovingBlock,
+        UnloadBlock,
     }
 
     RobotStates robotState;
@@ -106,6 +106,7 @@ public class SkystoneBlockLoader extends OpMode {
 
                 // TODO: Grab the block
 
+                UnloadBlock();
                 break;
             }
         }
@@ -147,5 +148,24 @@ public class SkystoneBlockLoader extends OpMode {
         }
 
         drivetrainController.BeginApproach(50);
+    }
+
+    private void UnloadBlock() {
+        if (robotState == RobotStates.UnloadBlock) {
+
+            telemetry.addData("Robot: ", "Error: already UnloadBlock");
+            return;
+        }
+
+        robotState = RobotStates.UnloadBlock;
+
+        telemetry.addData("Robot: ", "UnloadBlock");
+
+        // Drive to load the block
+        if (drivetrainController.IsMoving()) {
+            drivetrainController.Stop();
+        }
+
+        drivetrainController.BeginUnload(50);
     }
 }

@@ -80,15 +80,28 @@ public class DrivetrainController {
         front_right.setPower(-0.2);
         back_left.setPower(-0.2);
         back_right.setPower(-0.2);
+    }
 
-        while (front_left.isBusy() && front_right.isBusy() && back_left.isBusy() && back_right.isBusy()) {
-            // telemetry.addData("motor position:", front_left.getCurrentPosition());
-            // telemetry.update();
-        }
+    public void BeginUnload(int targetPosition){
+        Stop();
 
+        front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        front_left.setTargetPosition(targetPosition);
+        back_left.setTargetPosition(targetPosition);
+        front_right.setTargetPosition(targetPosition);
+        back_right.setTargetPosition(targetPosition);
+
+        front_left.setPower(-0.5);
+        front_right.setPower(0.5);
+        back_left.setPower(0.5);
+        back_right.setPower(-0.5);
     }
 
     public boolean IsMoving() {
-        return (front_left.isBusy() || front_right.isBusy() || back_left.isBusy() || back_right.isBusy());
+        return front_left.isBusy() || front_right.isBusy() || back_left.isBusy() || back_right.isBusy();
     }
 }
