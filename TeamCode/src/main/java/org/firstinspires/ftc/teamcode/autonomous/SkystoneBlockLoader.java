@@ -59,6 +59,7 @@ public class SkystoneBlockLoader extends OpMode {
         ApproachingBlock,
         GrabBlock,
         UnloadBlock,
+        DropBlock,
         CycleComplete,
         Done
     }
@@ -108,7 +109,7 @@ public class SkystoneBlockLoader extends OpMode {
                 hardwareMap.get(DcMotor.class, "intake_right"));
 
         liftController = new LiftController(
-            hardwareMap.get(DcMotor.class, "lift"));
+                hardwareMap.get(DcMotor.class, "lift"));
 
     }
 
@@ -117,7 +118,8 @@ public class SkystoneBlockLoader extends OpMode {
 
         switch (robotState) {
             case Initialization: {
-                // TODO: do any additional initialization, raise grabber?
+                // TODO: do any additional initialization, raise arm, move flpper, etc?
+                // liftController.MoveLift(12, LiftController.LiftTarget.Down);
 
                 LookForBlock();
                 break;
@@ -145,6 +147,11 @@ public class SkystoneBlockLoader extends OpMode {
 
             case UnloadBlock: {
                 // Waiting until the block is unloaded
+                break;
+            }
+
+            case DropBlock: {
+                DropBlock();
                 break;
             }
 
@@ -275,5 +282,23 @@ public class SkystoneBlockLoader extends OpMode {
         }
 
         drivetrainController.BeginUnload(50);
+
+        robotState = RobotStates.DropBlock;
+    }
+
+    private void DropBlock() {
+        if (robotState == RobotStates.UnloadBlock && !drivetrainController.IsMoving()) {
+            telemetry.addData("Robot: ", "DropBlock");
+
+            // TODO: drop the block
+//        liftController.MoveLift(12, LiftController.LiftTarget.Down);
+//
+//        flipperController.Flip();
+//        liftController.MoveLift(12, LiftController.LiftTarget.Up);
+//
+//        flipperController.Flip();
+
+            robotState = RobotStates.CycleComplete;
+        }
     }
 }
