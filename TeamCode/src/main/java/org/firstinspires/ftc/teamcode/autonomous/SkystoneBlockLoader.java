@@ -18,27 +18,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.IntakeController;
+import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name="SkystoneBlockLoader")
 public class SkystoneBlockLoader extends OpMode {
 
-    private OpenCvCamera openCvCamera;
     private CameraController cameraContoller;
+
     private DrivetrainController drivetrainController;
+    private FlipperController flipperController;
+    private ArmController armController;
+    private IntakeController intakeController;
+    private LiftController liftController;
 
     // Count of processed blocks
-    private int blockCount;
+    private int blockCount = 0;
 
+    // The robot states
     private enum RobotStates
     {
         Initialization,
@@ -50,20 +63,18 @@ public class SkystoneBlockLoader extends OpMode {
         Done
     }
 
-    RobotStates robotState;
-
-    SkystoneBlockLoader() {
-        robotState = RobotStates.Initialization;
-    }
+    private RobotStates robotState = RobotStates.Initialization;
 
     @Override
     public void init() {
 
         blockCount = 0;
+        robotState = RobotStates.Initialization;
 
+        // Create the camera
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-        telemetry.addData("Robot: ", "init1");
+        OpenCvCamera openCvCamera;
         // TODO: Update to use the desired camera
         boolean usePhoneCamera = true;
         if (usePhoneCamera) {
@@ -73,15 +84,32 @@ public class SkystoneBlockLoader extends OpMode {
             openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         }
 
-        telemetry.addData("Robot: ", "init2");
-        cameraContoller = new CameraController(openCvCamera, 640, 480);
+        String templateImageFileName = Environment.getExternalStorageDirectory()+ "/skystonetemplate.png";
+        cameraContoller = new CameraController(openCvCamera, 640, 480, OpenCvCameraRotation.UPRIGHT, templateImageFileName);
 
-        // Define motors
+        // Make all controllers
+
         drivetrainController = new DrivetrainController(
                 hardwareMap.get(DcMotor.class, "left_front"),
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
                 hardwareMap.get(DcMotor.class, "right_back"));
+
+        flipperController = new FlipperController(
+                hardwareMap.get(Servo.class, "flipper1"),
+                hardwareMap.get(Servo.class, "flipper2"));
+
+        armController = new ArmController(
+                hardwareMap.get(Servo.class, "armbase"),
+                hardwareMap.get(Servo.class, "armjoint"));
+
+        intakeController = new IntakeController(
+                hardwareMap.get(DcMotor.class, "intake_left"),
+                hardwareMap.get(DcMotor.class, "intake_right"));
+
+        liftController = new LiftController(
+            hardwareMap.get(DcMotor.class, "lift"));
+
     }
 
     @Override
@@ -219,6 +247,15 @@ public class SkystoneBlockLoader extends OpMode {
         telemetry.addData("Robot: ", "GrabBlock");
 
         // TODO: grab the block
+
+//        flipperController.Flip();
+//
+//        liftController.MoveLift(12, LiftController.LiftTarget.Down);
+//
+//        intakeController.ActuateIntake(0.1, 0);
+//        liftController.MoveLift(12, LiftController.LiftTarget.Up);
+//
+//        flipperController.Flip();
     }
 
     private void UnloadBlock() {

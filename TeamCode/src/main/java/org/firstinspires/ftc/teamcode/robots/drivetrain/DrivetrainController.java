@@ -11,10 +11,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 public class DrivetrainController {
 
-    private DcMotor front_left = null; //declare motors
-    private DcMotor front_right = null;
-    private DcMotor back_left = null;
-    private DcMotor back_right = null;
+    private DcMotor front_left;
+    private DcMotor front_right;
+    private DcMotor back_left;
+    private DcMotor back_right;
 
     public DrivetrainController(DcMotor frontLeft,
                                 DcMotor frontRight,
@@ -103,5 +103,12 @@ public class DrivetrainController {
 
     public boolean IsMoving() {
         return front_left.isBusy() || front_right.isBusy() || back_left.isBusy() || back_right.isBusy();
+    }
+
+    public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
+        front_left.setPower(frontLeftPower);
+        front_right.setPower(frontRightPower);
+        back_left.setPower(backLeftPower);
+        back_right.setPower(backRightPower);
     }
 }

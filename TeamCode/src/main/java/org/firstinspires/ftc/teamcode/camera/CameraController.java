@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.camera;
 
 import android.os.Environment;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -12,7 +9,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import static org.opencv.core.Core.minMaxLoc;
@@ -29,7 +25,7 @@ public class CameraController extends OpenCvPipeline {
     private OpenCvCamera openCvCamera;
 
     private double templateScore =  0;
-    private Mat templ;
+    private Mat skystoneTemplateImage;
 
     public enum States {
         Undetermined,
@@ -39,14 +35,13 @@ public class CameraController extends OpenCvPipeline {
 
     public States State;
 
-    public CameraController(OpenCvCamera camera, int width, int height) {
-        String path= Environment.getExternalStorageDirectory()+ "/skystonetemplate.png";
-        templ = imread(path);
+    public CameraController(OpenCvCamera camera, int width, int height, OpenCvCameraRotation cameraRotation, String templateImageFileName) {
+        skystoneTemplateImage = imread(templateImageFileName);
 
         openCvCamera = camera;
         openCvCamera.openCameraDevice();
         openCvCamera.setPipeline(this);
-        openCvCamera.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);
+        openCvCamera.startStreaming(width, height, cameraRotation);
     }
 
     public void onViewportTapped() {
@@ -60,7 +55,7 @@ public class CameraController extends OpenCvPipeline {
 
         Mat templout = new Mat();
         try {
-            Imgproc.matchTemplate(inputrgb, templ, templout, Imgproc.TM_CCOEFF_NORMED);
+            Imgproc.matchTemplate(inputrgb, skystoneTemplateImage, templout, Imgproc.TM_CCOEFF_NORMED);
         }
         catch (Exception e) {
             // telemetry.addData("exception", e.getMessage());
@@ -75,7 +70,7 @@ public class CameraController extends OpenCvPipeline {
 
         if (templateScore > 0.5) {
             State = States.ObjectFound;
-            Imgproc.rectangle(input, matchLoc, new Point(matchLoc.x + templ.cols(), matchLoc.y + templ.rows()), new Scalar(0, 255, 0), 5);
+            Imgproc.rectangle(input, matchLoc, new Point(matchLoc.x + skystoneTemplateImage.cols(), matchLoc.y + skystoneTemplateImage.rows()), new Scalar(0, 255, 0), 5);
         }
         else
         {
