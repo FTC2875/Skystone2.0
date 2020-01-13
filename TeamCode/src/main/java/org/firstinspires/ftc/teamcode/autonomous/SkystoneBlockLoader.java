@@ -32,6 +32,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="SkystoneBlockLoader")
 public class SkystoneBlockLoader extends OpMode {
 
+    private OpenCvCamera openCvCamera;
     private CameraController cameraContoller;
     private DrivetrainController drivetrainController;
 
@@ -58,59 +59,33 @@ public class SkystoneBlockLoader extends OpMode {
     @Override
     public void init() {
 
-        telemetry.addData("Robot: ", "init0");
         blockCount = 0;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        OpenCvCamera openCvCamera;
 
         telemetry.addData("Robot: ", "init1");
         // TODO: Update to use the desired camera
         boolean usePhoneCamera = true;
-//        if (usePhoneCamera) {
-//            openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-//        }
-//        else {
-//            openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        }
+        if (usePhoneCamera) {
+            openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        }
+        else {
+            openCvCamera = new OpenCvWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        }
 
         telemetry.addData("Robot: ", "init2");
-        //cameraContoller = new CameraController(openCvCamera, 640, 480);
-
-        telemetry.addData("Robot: ", "init3");
+        cameraContoller = new CameraController(openCvCamera, 640, 480);
 
         // Define motors
-//        drivetrainController = new DrivetrainController(
-//                hardwareMap.get(DcMotor.class, "left_front"),
-//                hardwareMap.get(DcMotor.class, "right_front"),
-//                hardwareMap.get(DcMotor.class, "left_back"),
-//                hardwareMap.get(DcMotor.class, "right_back"));
-
-        telemetry.addData("Robot: ", "init4");
-    }
-
-    public void init_loop() {
-        telemetry.addData("Robot: ", "init_loop");
-    }
-
-    public void start() {
-        telemetry.addData("Robot: ", "start");
+        drivetrainController = new DrivetrainController(
+                hardwareMap.get(DcMotor.class, "left_front"),
+                hardwareMap.get(DcMotor.class, "right_front"),
+                hardwareMap.get(DcMotor.class, "left_back"),
+                hardwareMap.get(DcMotor.class, "right_back"));
     }
 
     @Override
     public void loop() {
-
-        telemetry.addData("Robot: ", "loop");
-
-        if (cameraContoller == null) {
-            telemetry.addData("Robot: ", "cameraContoller");
-            return;
-        }
-
-        if (drivetrainController == null) {
-            telemetry.addData("Robot: ", "drivetrainController");
-            return;
-        }
 
         switch (robotState) {
             case Initialization: {
