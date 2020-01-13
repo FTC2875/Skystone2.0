@@ -77,32 +77,30 @@ public class SkystoneBlockLoader extends OpMode {
     @Override
     public void loop() {
 
-        switch (cameraContoller.State)
-        {
-            case Undetermined: {
-                // Scan for a block or move to unload it
-                if (drivetrainController.IsMoving()) {
-                    drivetrainController.Stop();
-                }
+        if (robotState == RobotStates.Initialization){
+            // TODO: do some initialization
 
-                drivetrainController.BeginScan(50);
+            LookForBlock();
+        }
+
+        switch (cameraContoller.State) {
+            case Undetermined: {
                 break;
             }
 
             case ObjectFound: {
-                // Drive to load the block
-                // Scan for a block or move to unload it
-                if (drivetrainController.IsMoving()) {
-                    drivetrainController.Stop();
-                }
-
-                drivetrainController.BeginApproach(50);
+                telemetry.addData("Camera: ", "ObjectFound");
+                ApproachBlock();
                 break;
             }
 
             case ObjectLost: {
+                telemetry.addData("Camera: ", "ObjectLost");
+
                 // Stop driving to load the block
                 if (drivetrainController.IsMoving()) {
+
+                    telemetry.addData("Robot: ", "Stop");
                     drivetrainController.Stop();
                 }
 
@@ -111,5 +109,43 @@ public class SkystoneBlockLoader extends OpMode {
                 break;
             }
         }
+    }
+
+    private void LookForBlock() {
+        if (robotState == RobotStates.LookingForBlock) {
+
+            telemetry.addData("Robot: ", "Error: already LookingForBlock");
+            return;
+        }
+
+        robotState = RobotStates.LookingForBlock;
+
+        telemetry.addData("Robot: ", "LookingForBlock");
+
+        // Scan for a block or move to unload it
+        if (drivetrainController.IsMoving()) {
+            drivetrainController.Stop();
+        }
+
+        drivetrainController.BeginScan(50);
+    }
+
+    private void ApproachBlock() {
+        if (robotState == RobotStates.ApproachingBlock) {
+
+            telemetry.addData("Robot: ", "Error: already ApproachingBlock");
+            return;
+        }
+
+        robotState = RobotStates.ApproachingBlock;
+
+        telemetry.addData("Robot: ", "ApproachingBlock");
+
+        // Drive to load the block
+        if (drivetrainController.IsMoving()) {
+            drivetrainController.Stop();
+        }
+
+        drivetrainController.BeginApproach(50);
     }
 }
