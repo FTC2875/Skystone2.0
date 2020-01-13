@@ -29,7 +29,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous public class SkystoneBlockLoader extends OpMode {
+@Autonomous(name="SkystoneBlockLoader")
+public class SkystoneBlockLoader extends OpMode {
 
     private CameraController cameraContoller;
     private DrivetrainController drivetrainController;
@@ -86,6 +87,14 @@ import org.openftc.easyopencv.OpenCvWebcam;
                 hardwareMap.get(DcMotor.class, "right_back"));
 
         telemetry.addData("Robot: ", "init4");
+    }
+
+    public void init_loop() {
+        telemetry.addData("Robot: ", "init_loop");
+    }
+
+    public void start() {
+        telemetry.addData("Robot: ", "start");
     }
 
     @Override
