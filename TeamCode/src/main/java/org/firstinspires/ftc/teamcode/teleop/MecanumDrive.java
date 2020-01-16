@@ -30,23 +30,22 @@ import java.lang.Math;
 
 @TeleOp(name="MecanumDrive", group="Iterative Opmode")
 public class MecanumDrive extends OpMode {
-
     //drive motors
-    DrivetrainController drivetrainController;
+    private DrivetrainController drivetrainController;
     //intake
-    IntakeController intakeController;
-        //lift
-    LiftController lift;
-        //arm/gripper
-    ArmController armController;
-        //foundation movers
-    FlipperController flipperController;
+    private IntakeController intakeController;
+    //lift
+    private LiftController lift;
+    //arm/gripper
+    private ArmController armController;
+    //foundation movers
+    private FlipperController flipperController;
 
-    boolean flipped = false;
-    int liftstage = 0;
+    private boolean flipped = false;
+    private int liftstage = 0;
 
-    ExpansionHubEx expansionHub;
-    ExpansionHubEx expansionHub2;
+    private ExpansionHubEx expansionHub;
+    private ExpansionHubEx expansionHub2;
 
     @Override
     public void init() {
@@ -100,9 +99,8 @@ public class MecanumDrive extends OpMode {
         double max = Math.max(Math.abs(blPower),Math.abs(flPower));
 
         //slow mode
-        double powerFactor = 1;
+        double powerFactor = 1.0;
         if (gamepad1.right_bumper) powerFactor = 0.4;
-        else powerFactor = 1;
 
         //divide by 2 to prevent overflow
         drivetrainController.SetPower(
@@ -142,12 +140,12 @@ public class MecanumDrive extends OpMode {
             rightIntakepower = -1 * gamepad1.left_trigger;
         }
 
-        intakeController.ActuateIntake(leftIntakepower, rightIntakepower);
+        intakeController.BeginIntake(leftIntakepower, rightIntakepower);
 
         //arm control
         double armjointPosition = 0;
-        if (gamepad2.dpad_left == true) armjointPosition = 0.88;
-        if (gamepad2.dpad_right == true) armjointPosition = 0;
+        if (gamepad2.dpad_left) armjointPosition = 0.88;
+        if (gamepad2.dpad_right) armjointPosition = 0;
         armController.SetPosition(
                 0.7 + (-0.6 * gamepad2.right_stick_y),
                 armjointPosition);
@@ -166,10 +164,10 @@ public class MecanumDrive extends OpMode {
         }
 
         //lift controls, @power 0 - the motor brakes
-        if(gamepad2.dpad_up == true){
-            lift.MoveLift(12, 0.2, LiftController.Direction.Up); }
-        else if(gamepad2.dpad_down == true){
-                lift.MoveLift(12, 0.1, LiftController.Direction.Down);}
+        if(gamepad2.dpad_up){
+            lift.BeginMovingLift(12, 0.2, LiftController.Direction.Up); }
+        else if(gamepad2.dpad_down){
+                lift.BeginMovingLift(12, 0.1, LiftController.Direction.Down);}
         else {
             lift.Stop();
         }

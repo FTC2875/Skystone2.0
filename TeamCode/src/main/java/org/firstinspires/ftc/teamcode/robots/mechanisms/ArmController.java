@@ -29,7 +29,16 @@ public class ArmController {
         return armjoint.getPosition();
     }
 
-    public void Raise() {
+    public void BeginGrip() {
+        // TODO implement grip
+        // armbase
+    }
 
+    public void BeginRelease() {
+        // TODO implement release
+    }
+
+    public void BeginRaise() {
+        // TODO implement raise
     }
 }

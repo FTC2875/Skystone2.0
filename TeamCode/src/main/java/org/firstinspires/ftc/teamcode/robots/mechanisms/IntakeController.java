@@ -24,12 +24,16 @@ public class IntakeController {
     }
 
     public void SetPosition(int leftIntakePosition, int rightIntakePosition) {
-        intake_left.setTargetPosition(leftIntakePosition);;
+        intake_left.setTargetPosition(leftIntakePosition);
         intake_right.setTargetPosition(rightIntakePosition);
     }
 
-    public void ActuateIntake(double leftIntakePower, double rightIntakePower) {
+    public void BeginIntake(double leftIntakePower, double rightIntakePower) {
         intake_left.setPower(leftIntakePower);
         intake_right.setPower(rightIntakePower);
+    }
+
+    public boolean IsMoving() {
+        return intake_left.isBusy() || intake_right.isBusy();
     }
 }

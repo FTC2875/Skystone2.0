@@ -28,7 +28,7 @@ public class LiftController {
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void MoveLift(int position, double power, Direction direction) {
+    public void BeginMovingLift(int position, double power, Direction direction) {
         double liftposition = lift.getCurrentPosition();
 
         switch (liftstage) {

@@ -26,7 +26,7 @@ public class FlipperController {
         flipper2.setPosition(flipper2Position);
     }
 
-    public void Flip() {
+    public void BeginFlip() {
 
         if (flipped) {
             flipper1.setPosition(0.8);
