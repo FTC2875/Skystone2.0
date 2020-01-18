@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robots.mechanisms.IntakeController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
 import org.openftc.revextensions2.ExpansionHubEx;
 
+import java.io.File;
 import java.lang.Math;
 
 
@@ -43,6 +45,7 @@ public class MecanumDrive extends OpMode {
 
     private boolean flipped = false;
     private int liftstage = 0;
+    private double powerFactor;
 
     private ExpansionHubEx expansionHub;
     private ExpansionHubEx expansionHub2;
@@ -70,8 +73,11 @@ public class MecanumDrive extends OpMode {
                 hardwareMap.get(Servo.class, "flipper1"),
                 hardwareMap.get(Servo.class, "flipper2"));
 
+
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
+       // playdroid();
+
     }
 
 
@@ -89,24 +95,24 @@ public class MecanumDrive extends OpMode {
 
         //do more trig to find power
         double negStrafePower = -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
-        double posStrafeMath = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag;
+        double posStrafePower = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag;
 
         //set motor power to calculated values
         double frPower = negStrafePower + turn;
         double blPower = negStrafePower - turn;
-        double flPower = posStrafeMath + turn;
-        double brPower = posStrafeMath - turn;
+        double flPower = posStrafePower + turn;
+        double brPower = posStrafePower - turn;
         double max = Math.max(Math.abs(blPower),Math.abs(flPower));
 
         //slow mode
-        double powerFactor = 1.0;
         if (gamepad1.right_bumper) powerFactor = 0.4;
+        else  powerFactor = 1.0;
 
         //divide by 2 to prevent overflow
         drivetrainController.SetPower(
-                powerFactor * blPower/2,
-                powerFactor * frPower/2,
                 powerFactor * flPower/2,
+                powerFactor * frPower/2,
+                powerFactor * blPower/2,
                 powerFactor * brPower/2);
 
         //RGB :D
@@ -152,22 +158,22 @@ public class MecanumDrive extends OpMode {
 
         double liftposition = lift.getCurrentPosition();
 
-        //if (gamepad2.dpad_up == true && liftstage <= 4) liftstage = liftstage + 1;
-        //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage = liftstage - 1;
+        //if (gamepad2.dpad_up == true && liftstage <= 4) liftstage++;
+        //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage--;
 
         switch (liftstage) {
             case (0): {
-        lift.setTargetPosition(12);
+        lift.setTargetPosition(0);
         }   case(1): {
-
+            lift.setTargetPosition(154);
             }
         }
 
         //lift controls, @power 0 - the motor brakes
         if(gamepad2.dpad_up){
-            lift.BeginMovingLift(12, 0.2, LiftController.Direction.Up); }
+            lift.setPower(0.2); }
         else if(gamepad2.dpad_down){
-                lift.BeginMovingLift(12, 0.1, LiftController.Direction.Down);}
+                lift.setPower(-0.1);}
         else {
             lift.Stop();
         }
@@ -178,5 +184,11 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("arm joint: ", armController.getArmJointPosition());
         telemetry.addData("Power: ", powerFactor);
         telemetry.update();
+    }
+
+    public void playdroid(){
+        String soundPath = "/FIRST/blocks/sounds";
+        File droidFile = new File(soundPath + "/droid.wav");
+        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, droidFile);
     }
 }

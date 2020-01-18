@@ -23,40 +23,30 @@ public class LiftController {
         this.lift = lift;
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //if motor.setPower(0), set these motors to brake
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-    public void BeginMovingLift(int position, double power, Direction direction) {
         double liftposition = lift.getCurrentPosition();
-
-        switch (liftstage) {
-            case (0): {
-                lift.setTargetPosition(position);
-            }   case(1): {
-
-            }
-        }
-
-        //lift controls, @power 0 - the motor brakes
-        switch (direction){
-            case Up:
-            lift.setPower(-power);
-            break;
-
-            case Down:
-            lift.setPower(power);
-            break;
-        }
     }
 
-    public void Stop() {
-        lift.setPower(0);
+    public void BeginMovingLift(int position, double power) {
+
+
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                lift.setPower(power);
+                while(lift.isBusy()){}
+                Stop();
     }
+
+    public void Stop() { lift.setPower(0); }
 
     public void setTargetPosition(int position) {
         lift.setTargetPosition(position);
+    }
+
+    public void setPower(double power) {
+        lift.setPower(power);
     }
 
     public double getCurrentPosition() {

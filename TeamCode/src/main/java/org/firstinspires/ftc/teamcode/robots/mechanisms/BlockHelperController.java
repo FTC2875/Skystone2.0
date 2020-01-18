@@ -71,27 +71,27 @@ public class BlockHelperController extends Thread {
         }
     }
 
-    public void BaginLoad() {
+    public void BeginLoad() {
         // Assumes ready starting position
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
         SetRunningState(RunningStates.Loading);
+        run();
     }
 
     private void Load() {
         // Assumes ready starting position
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
-        SetRunningState(RunningStates.Loading);
 
         // TODO: fix the load sequence
-        intakeController.BeginIntake(0.1, 0);
+        intakeController.BeginIntake(-1, 1);
         Wait(2000);
 
         armController.BeginGrip();
         Wait(1000);
 
-        liftController.BeginMovingLift(12, 0.2, LiftController.Direction.Up);
+        liftController.BeginMovingLift(12, 0.2);
         Wait(5000);
 
         flipperController.BeginFlip();
@@ -101,6 +101,7 @@ public class BlockHelperController extends Thread {
         // flipperController.BeginFlip();
 
         SetRunningState(RunningStates.Ready);
+        run();
     }
 
     public void BeginUnload() {
@@ -128,7 +129,7 @@ public class BlockHelperController extends Thread {
         SetRunningState(RunningStates.Ready);
     }
 
-    public void Wait(int millisec ) {
+    public void Wait(int millisec) {
         try {
             Thread.sleep(millisec);
         }

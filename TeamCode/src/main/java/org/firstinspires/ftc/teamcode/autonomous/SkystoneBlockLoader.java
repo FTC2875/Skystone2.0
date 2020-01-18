@@ -242,7 +242,7 @@ public class SkystoneBlockLoader extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginScan(50);
+        drivetrainController.BeginScan(500);
     }
 
     private void ApproachBlock() {
@@ -275,7 +275,7 @@ public class SkystoneBlockLoader extends OpMode {
 
         telemetry.addData("Robot: ", "WaitingToGrabBlock");
 
-        blockHelperController.BaginLoad();
+        blockHelperController.BeginLoad();
     }
 
     private void UnloadBlock() {

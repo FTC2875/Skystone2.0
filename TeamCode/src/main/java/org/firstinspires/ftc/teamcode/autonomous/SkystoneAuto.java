@@ -44,7 +44,8 @@ import java.util.Random;
 import static org.opencv.core.Core.minMaxLoc;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
-@Autonomous public class SkystoneAuto extends LinearOpMode {
+@Autonomous
+public class SkystoneAuto extends LinearOpMode {
     OpenCvCamera webcam;
     SkystonePipeline SkystonePipeline;
 
@@ -214,6 +215,7 @@ import static org.opencv.imgcodecs.Imgcodecs.imread;
 
                     }
                 }
+
 
 
                 telemetry.update();
