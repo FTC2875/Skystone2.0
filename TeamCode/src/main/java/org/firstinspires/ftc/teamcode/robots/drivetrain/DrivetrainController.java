@@ -31,6 +31,11 @@ public class DrivetrainController {
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 //        front_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        front_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        back_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
