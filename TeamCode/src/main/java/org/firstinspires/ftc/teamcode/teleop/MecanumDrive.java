@@ -29,6 +29,7 @@ import java.lang.Math;
  *
  * Author: Daniel
  */
+//TODO: Fix liftstage, fix TestMotors,DT encoders non functional, autonomous?
 
 @TeleOp(name="MecanumDrive", group="Iterative Opmode")
 public class MecanumDrive extends OpMode {
@@ -44,8 +45,11 @@ public class MecanumDrive extends OpMode {
     private FlipperController flipperController;
 
     private boolean flipped = false;
+    private double powerFactor = 1;
+    private double armjointPosition;
+    private int slowstate = 0;
+    private int liftstate = 0;
     private int liftstage = 0;
-    private double powerFactor;
 
     private ExpansionHubEx expansionHub;
     private ExpansionHubEx expansionHub2;
@@ -84,36 +88,38 @@ public class MecanumDrive extends OpMode {
     @Override
     public void loop() {
 
+        /// DRIVETRAIN CONTROL ///
         //Strafing and rotation definition
-        double strafey  = gamepad1.left_stick_y; //basically forwards and backwards
-        double strafex = -gamepad1.left_stick_x; //lateral movement
-        double turn  = -gamepad1.right_stick_x; //rotation
+        double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
+        double strafex = powerFactor * -gamepad1.left_stick_x; //lateral movement
+        double turn  = powerFactor * -gamepad1.right_stick_x; //rotation
 
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe from leftstick x and y
         double strafeMag = 0.7 * Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
         //0.7 is correction factor, max val with this is 1.414 to scale to 1
 
         //do more trig to find power
-        double negStrafePower = -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
-        double posStrafePower = Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag;
+        double negStrafePower =  -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
+        double posStrafePower =   Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag;
 
         //set motor power to calculated values
         double frPower = negStrafePower + turn;
         double blPower = negStrafePower - turn;
         double flPower = posStrafePower + turn;
         double brPower = posStrafePower - turn;
-        double max = Math.max(Math.abs(blPower),Math.abs(flPower));
 
         //slow mode
-        if (gamepad1.right_bumper) powerFactor = 0.4;
-        else  powerFactor = 1.0;
+        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.4; slowstate = 2;}
+        if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.0; slowstate = 3; }
+        if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         //divide by 2 to prevent overflow
         drivetrainController.SetPower(
-                powerFactor * flPower/2,
-                powerFactor * frPower/2,
-                powerFactor * blPower/2,
-                powerFactor * brPower/2);
+                flPower/2,
+                frPower/2,
+                blPower/2,
+                brPower/2);
 
         //RGB :D
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
@@ -127,6 +133,10 @@ public class MecanumDrive extends OpMode {
 //                strafey + turn - strafex,
 //                strafey - turn + strafex);
 
+
+
+
+        /// FLIPPER CONTROL ///
         if(gamepad2.y) flipped = true;
         if (flipped) {
             flipperController.SetPosition(0.8, 0.8);
@@ -136,6 +146,8 @@ public class MecanumDrive extends OpMode {
             flipperController.SetPosition(0, 0);
         }
 
+
+        /// INTAKE ///
         double leftIntakepower = 0;
         double rightIntakepower = 0;
         if (gamepad1.right_trigger > 0.1) {
@@ -148,44 +160,47 @@ public class MecanumDrive extends OpMode {
 
         intakeController.BeginIntake(leftIntakepower, rightIntakepower);
 
-        //arm control
-        double armjointPosition = 0;
+
+
+        /// ARM CONTROL ///
+        armjointPosition = 0;
         if (gamepad2.dpad_left) armjointPosition = 0.88;
         if (gamepad2.dpad_right) armjointPosition = 0;
-        armController.SetPosition(
-                0.7 + (-0.6 * gamepad2.right_stick_y),
-                armjointPosition);
-
-        double liftposition = lift.getCurrentPosition();
-
-        //if (gamepad2.dpad_up == true && liftstage <= 4) liftstage++;
-        //if (gamepad2.dpad_down == true && liftstage > 0 ) liftstage--;
-
-        switch (liftstage) {
-            case (0): {
-        lift.setTargetPosition(0);
-        }   case(1): {
-            lift.setTargetPosition(154);
-            }
-        }
-
-        //lift controls, @power 0 - the motor brakes
-        if(gamepad2.dpad_up){
-            lift.setPower(0.2); }
-        else if(gamepad2.dpad_down){
-                lift.setPower(-0.1);}
-        else {
-            lift.Stop();
-        }
+        armController.SetPosition(0.7 + (-0.6 * gamepad2.right_stick_y), armjointPosition);
 
 
-        telemetry.addData("lift pos: ", liftposition);
+        /// LIFT CONTROL ///
+        if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
+        if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
+        if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
+
+
+        lift.setPower(gamepad2.left_stick_y / 5);
+
+
+
+        /// DEBUG ///
+        telemetry.addData("lift pos: ", lift.getCurrentPosition());
         telemetry.addData("liftstage", liftstage);
         telemetry.addData("arm joint: ", armController.getArmJointPosition());
-        telemetry.addData("Power: ", powerFactor);
+        telemetry.addData("Drive Power: ", powerFactor);
+        telemetry.addData("Slow?", slowstate);
+        telemetry.addData("fl Power: ", drivetrainController.FLPower());
+        telemetry.addData("fl Pos: ", drivetrainController.FLPos());
         telemetry.update();
     }
 
+    public void moveLift(){
+        switch (liftstage) {
+            case (0): { lift.BeginMovingLift(0, 0.15);}
+            case(1): { lift.BeginMovingLift(200, 0.15); }
+            case(2): { lift.BeginMovingLift(400, 0.15); }
+            case(3): {lift.BeginMovingLift(600, 0.15); }
+        }
+    }
+
+
+    /// SOUNDS ///
     public void playdroid(){
         String soundPath = "/FIRST/blocks/sounds";
         File droidFile = new File(soundPath + "/droid.wav");

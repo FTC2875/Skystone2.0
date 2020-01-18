@@ -75,7 +75,7 @@ public class SkystoneBlockLoader extends OpMode {
 
         OpenCvCamera openCvCamera;
         // TODO: Update to use the desired camera
-        boolean usePhoneCamera = true;
+        boolean usePhoneCamera = false;
         if (usePhoneCamera) {
             openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         }

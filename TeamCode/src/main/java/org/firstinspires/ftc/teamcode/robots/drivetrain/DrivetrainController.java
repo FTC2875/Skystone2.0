@@ -116,4 +116,12 @@ public class DrivetrainController {
         back_left.setPower(backLeftPower);
         back_right.setPower(backRightPower);
     }
+    public double FLPower(){ return front_left.getPower(); }
+    public double BLPower(){ return back_left.getPower(); }
+    public double FRPower(){ return front_right.getPower(); }
+    public double BRPower(){ return back_right.getPower(); }
+    public double FLPos() { return front_left.getCurrentPosition(); }
+    public double BLPos() { return back_left.getCurrentPosition(); }
+    public double FRPos() { return front_right.getCurrentPosition(); }
+    public double BRPos() { return back_right.getCurrentPosition(); }
 }
