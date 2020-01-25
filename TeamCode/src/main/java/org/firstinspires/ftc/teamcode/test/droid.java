@@ -1,22 +1,17 @@
 package org.firstinspires.ftc.teamcode.test;
+import android.media.MediaPlayer;
+
 import com.qualcomm.ftccommon.SoundPlayer;
 
+
+import org.firstinspires.ftc.teamcode.R;
 
 import java.io.File;
 
 public class droid{
-    private String soundPath = "/FIRST/blocks/sounds";
-    private File droidFile = new File( soundPath + "/droid.wav");
-
-    public String hwmap = new String();
-
-    public void playDroid(String hwmap) {
-
-        // Make sure that the sound files exist on the phone
-
-        // Display sound status
- //      telemetry.addData("gold sound", goldFound ? "Found" : "NOT Found \nCopy gold.wav to " + soundPath);
- //       SoundPlayer.getInstance().startPlaying(hwmap, droidFile);
+    public void playDroid() {
+            //MediaPlayer mediaPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.droid);
+            //mediaPlayer.start();
 
     }
 }

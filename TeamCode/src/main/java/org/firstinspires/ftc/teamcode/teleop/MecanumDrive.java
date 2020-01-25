@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.media.MediaPlayer;
+
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
@@ -29,7 +32,7 @@ import java.lang.Math;
  *
  * Author: Daniel
  */
-//TODO: Fix liftstage, fix TestMotors,DT encoders non functional, autonomous?
+//TODO: Fix liftstage + autonomous
 
 @TeleOp(name="MecanumDrive", group="Iterative Opmode")
 public class MecanumDrive extends OpMode {
@@ -80,7 +83,9 @@ public class MecanumDrive extends OpMode {
 
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
-       // playdroid();
+
+        expansionHub.setPhoneChargeEnabled(true);
+       playdroid();
 
     }
 
@@ -124,6 +129,8 @@ public class MecanumDrive extends OpMode {
         //RGB :D
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
+
+        double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
 
 
 //        if the above doesn't work, use this
@@ -187,6 +194,7 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("Slow?", slowstate);
         telemetry.addData("fl Power: ", drivetrainController.FLPower());
         telemetry.addData("fl Pos: ", drivetrainController.FLPos());
+        telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
         telemetry.update();
     }
 
@@ -202,8 +210,7 @@ public class MecanumDrive extends OpMode {
 
     /// SOUNDS ///
     public void playdroid(){
-        String soundPath = "/FIRST/blocks/sounds";
-        File droidFile = new File(soundPath + "/droid.wav");
-        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, droidFile);
+        MediaPlayer mediaPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.droid);
+        mediaPlayer.start();
     }
 }

@@ -18,6 +18,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
+import android.media.MediaPlayer;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -26,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
@@ -41,7 +43,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="SkystoneBlockLoader")
 public class SkystoneBlockLoader extends OpMode {
 
-    private CameraController cameraContoller;
+    private CameraController cameraController;
 
     private DrivetrainController drivetrainController;
     private BlockHelperController blockHelperController;
@@ -74,7 +76,6 @@ public class SkystoneBlockLoader extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         OpenCvCamera openCvCamera;
-        // TODO: Update to use the desired camera
         boolean usePhoneCamera = false;
         if (usePhoneCamera) {
             openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
@@ -84,7 +85,7 @@ public class SkystoneBlockLoader extends OpMode {
         }
 
         String templateImageFileName = Environment.getExternalStorageDirectory()+ "/skystonetemplate.png";
-        cameraContoller = new CameraController(openCvCamera, 640, 480, OpenCvCameraRotation.UPRIGHT, templateImageFileName);
+        cameraController = new CameraController(openCvCamera, 640, 480, OpenCvCameraRotation.UPRIGHT, templateImageFileName);
 
         // Create all controllers
 
@@ -105,11 +106,9 @@ public class SkystoneBlockLoader extends OpMode {
                         hardwareMap.get(DcMotor.class, "intake_left"),
                         hardwareMap.get(DcMotor.class, "intake_right")),
                 new LiftController(
-                        hardwareMap.get(DcMotor.class, "lift")),
-                telemetry
-        );
+                        hardwareMap.get(DcMotor.class, "lift")), telemetry);
 
-        blockHelperController.start();
+        blockHelperController.run();
     }
 
     @Override
@@ -117,16 +116,18 @@ public class SkystoneBlockLoader extends OpMode {
 
         switch (robotState) {
             case Initialization: {
-                // TODO: do any additional initialization, raise arm, move flpper, etc?
+                // TODO: do any additional initialization, raise arm, move flipper, etc?
                 // liftController.BeginMovingLift(12, LiftController.Direction.Down);
-
+                playdroid();
                 LookForBlock();
                 break;
             }
 
             case LookingForBlock: {
                 ProcessCameraState();
+                //if CameraController.States.valueOf() {
 
+               // }
                 // TODO: if the robot did not find block before it it reached the end of platform, set robotState to Done
                 break;
             }
@@ -199,7 +200,7 @@ public class SkystoneBlockLoader extends OpMode {
     }
 
     private void ProcessCameraState() {
-        switch (cameraContoller.State) {
+        switch (cameraController.State) {
             case Undetermined: {
                 break;
             }
@@ -242,7 +243,7 @@ public class SkystoneBlockLoader extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginScan(500);
+        drivetrainController.BeginScan(950);
     }
 
     private void ApproachBlock() {
@@ -307,5 +308,10 @@ public class SkystoneBlockLoader extends OpMode {
 
             robotState = RobotStates.WaitingForBlockToDrop;
         }
+
+    }
+    private void playdroid(){
+        MediaPlayer mediaPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.droid);
+        mediaPlayer.start();
     }
 }
