@@ -116,7 +116,7 @@ public class SkystoneBlockLoader extends OpMode {
 
         switch (robotState) {
             case Initialization: {
-                // TODO: do any additional initialization, raise arm, move flipper, etc?
+                // TODO: do any additional initialization
                 // liftController.BeginMovingLift(12, LiftController.Direction.Down);
                 playdroid();
                 LookForBlock();
