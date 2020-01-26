@@ -16,7 +16,6 @@ public class DrivetrainController {
     private DcMotor back_left;
     private DcMotor back_right;
 
-    private int t;
 
     public DrivetrainController(DcMotor frontLeft,
                                 DcMotor frontRight,

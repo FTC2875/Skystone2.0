@@ -32,7 +32,7 @@ public class LiftController {
 
     public void BeginMovingLift(int position, double power) {
 
-
+                lift.setTargetPosition(position);
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 lift.setPower(power);
                 while(lift.isBusy()){}
