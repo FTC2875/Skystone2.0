@@ -32,8 +32,10 @@ public class TestMotors extends OpMode {
     private DcMotor front_right = null;
     private DcMotor back_right = null;
     private DcMotor back_left = null;
+    private DcMotor lift = null;
 
     private DrivetrainController drivetrainController;
+    private LiftController liftController;
 
     @Override
     public void init() {
@@ -43,18 +45,24 @@ public class TestMotors extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
                 hardwareMap.get(DcMotor.class, "right_back"));
+
+        liftController = new LiftController(
+                hardwareMap.get(DcMotor.class, "lift"));
+
     }
     @Override
     public void loop() {
         if (gamepad1.dpad_up) drivetrainController.SetPower(1, 0, 0, 0);
-        if (gamepad1.dpad_right) drivetrainController.SetPower(0, 1, 0, 0);
-        if (gamepad1.dpad_down) drivetrainController.SetPower(0, 0, 1, 0);
-        if (gamepad1.dpad_left) drivetrainController.SetPower(0, 0, 0, 1);
+        else if (gamepad1.dpad_right) drivetrainController.SetPower(0, 1, 0, 0);
+        else if (gamepad1.dpad_down) drivetrainController.SetPower(0, 0, 1, 0);
+        else if (gamepad1.dpad_left) drivetrainController.SetPower(0, 0, 0, 1);
+        else drivetrainController.SetPower(0,0,0,0);
 
         telemetry.addData("fl:", drivetrainController.FLPos());
         telemetry.addData("bl:", drivetrainController.BLPos());
         telemetry.addData("fr:", drivetrainController.FRPos());
         telemetry.addData("br:", drivetrainController.BRPos());
+        telemetry.addData("lift: ", liftController.getCurrentPosition());
         telemetry.update();
     }
 

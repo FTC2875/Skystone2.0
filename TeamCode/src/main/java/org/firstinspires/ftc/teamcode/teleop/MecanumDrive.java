@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import android.media.MediaPlayer;
+
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
 import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
@@ -15,6 +18,8 @@ import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.io.File;
 import java.lang.Math;
+
+import static java.lang.Math.abs;
 
 
 /**
@@ -29,7 +34,7 @@ import java.lang.Math;
  *
  * Author: Daniel
  */
-//TODO: Fix liftstage, fix TestMotors,DT encoders non functional, autonomous?
+//TODO: Fix liftstage + autonomous
 
 @TeleOp(name="MecanumDrive", group="Iterative Opmode")
 public class MecanumDrive extends OpMode {
@@ -45,22 +50,27 @@ public class MecanumDrive extends OpMode {
     private FlipperController flipperController;
 
     private boolean flipped = false;
-    private double powerFactor = 1;
+    private double powerFactor = 0.5;
     private double armjointPosition;
-    private int slowstate = 0;
+    private int slowstate = 1;
     private int liftstate = 0;
     private int liftstage = 0;
+
+    DcMotor frontLeft;
+    DcMotor frontRight;
+    DcMotor backLeft;
+    DcMotor backRight;
 
     private ExpansionHubEx expansionHub;
     private ExpansionHubEx expansionHub2;
 
     @Override
     public void init() {
-        drivetrainController = new DrivetrainController(
-                hardwareMap.get(DcMotor.class, "left_front"),
-                hardwareMap.get(DcMotor.class, "right_front"),
-                hardwareMap.get(DcMotor.class, "left_back"),
-                hardwareMap.get(DcMotor.class, "right_back"));
+        //drivetrainController = new DrivetrainController(
+               frontLeft =  hardwareMap.get(DcMotor.class, "left_front");
+               frontRight =  hardwareMap.get(DcMotor.class, "right_front");
+               backLeft = hardwareMap.get(DcMotor.class, "left_back");
+               backRight =  hardwareMap.get(DcMotor.class, "right_back");
 
         intakeController = new IntakeController(
                 hardwareMap.get(DcMotor.class, "intake_left"),
@@ -80,7 +90,9 @@ public class MecanumDrive extends OpMode {
 
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
-       // playdroid();
+
+        expansionHub.setPhoneChargeEnabled(true);
+       playdroid();
 
     }
 
@@ -108,22 +120,39 @@ public class MecanumDrive extends OpMode {
         double flPower = posStrafePower + turn;
         double brPower = posStrafePower - turn;
 
+//        if (flPower < -1) flPower = -1;
+//        if (flPower > 1) flPower = 1;
+//        if (blPower < -1) blPower = -1;
+//        if (blPower > 1) blPower = 1;
+//
+//        if (blPower < -1) blPower = -1;
+//        if (blPower > 1) blPower = 1;
+//        if (blPower < -1) blPower = -1;
+//        if (brPower > 1) brPower = 1;
+
         //slow mode
-        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.4; slowstate = 2;}
+        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
         if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.0; slowstate = 3; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         //divide by 2 to prevent overflow
-        drivetrainController.SetPower(
-                flPower/2,
-                frPower/2,
-                blPower/2,
-                brPower/2);
+        //drivetrainController.SetPower(
+        //       flPower/2,
+        //        frPower/2,
+        //        blPower/2,
+        //        brPower/2);
+
+        frontLeft.setPower(flPower  );
+        frontRight.setPower(frPower);
+        backLeft.setPower(blPower);
+        backRight.setPower(brPower);
 
         //RGB :D
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
+
+        double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
 
 
 //        if the above doesn't work, use this
@@ -166,16 +195,15 @@ public class MecanumDrive extends OpMode {
         armjointPosition = 0;
         if (gamepad2.dpad_left) armjointPosition = 0.88;
         if (gamepad2.dpad_right) armjointPosition = 0;
-        armController.SetPosition(0.7 + (-0.6 * gamepad2.right_stick_y), armjointPosition);
+        armController.SetPosition(gamepad2.right_stick_y, gamepad2.right_stick_x);
 
 
         /// LIFT CONTROL ///
-        if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
-        if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
-        if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
+        //if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
+        //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
+        //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
 
-
-        lift.setPower(gamepad2.left_stick_y / 5);
+        lift.setPower(gamepad2.left_stick_y);
 
 
 
@@ -185,8 +213,9 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("arm joint: ", armController.getArmJointPosition());
         telemetry.addData("Drive Power: ", powerFactor);
         telemetry.addData("Slow?", slowstate);
-        telemetry.addData("fl Power: ", drivetrainController.FLPower());
-        telemetry.addData("fl Pos: ", drivetrainController.FLPos());
+        //telemetry.addData("fl Power: ", drivetrainController.FLPower());
+        //telemetry.addData("fl Pos: ", drivetrainController.FLPos());
+        telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
         telemetry.update();
     }
 
@@ -202,8 +231,7 @@ public class MecanumDrive extends OpMode {
 
     /// SOUNDS ///
     public void playdroid(){
-        String soundPath = "/FIRST/blocks/sounds";
-        File droidFile = new File(soundPath + "/droid.wav");
-        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, droidFile);
+        MediaPlayer mediaPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.droid);
+        mediaPlayer.start();
     }
 }
