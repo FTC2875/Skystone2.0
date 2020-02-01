@@ -23,7 +23,7 @@ public class LiftController {
         this.lift = lift;
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //if motor.setPower(0), set these motors to brake
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

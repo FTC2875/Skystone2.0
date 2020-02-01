@@ -102,13 +102,20 @@ public class MecanumDrive extends OpMode {
 
         /// DRIVETRAIN CONTROL ///
         //Strafing and rotation definition
+
+        //slow mode
+        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
+        if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
+        if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
+
         double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
         double strafex = powerFactor * -gamepad1.left_stick_x; //lateral movement
         double turn  = powerFactor * -gamepad1.right_stick_x; //rotation
 
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe from leftstick x and y
-        double strafeMag = 0.7 * Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
-        //0.7 is correction factor, max val with this is 1.414 to scale to 1
+        double strafeMag = Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
+
 
         //do more trig to find power
         double negStrafePower =  -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
@@ -120,21 +127,16 @@ public class MecanumDrive extends OpMode {
         double flPower = posStrafePower + turn;
         double brPower = posStrafePower - turn;
 
-//        if (flPower < -1) flPower = -1;
-//        if (flPower > 1) flPower = 1;
-//        if (blPower < -1) blPower = -1;
-//        if (blPower > 1) blPower = 1;
-//
-//        if (blPower < -1) blPower = -1;
-//        if (blPower > 1) blPower = 1;
-//        if (blPower < -1) blPower = -1;
-//        if (brPower > 1) brPower = 1;
+        //overflow prevention
+        if (flPower <= -1) flPower = -1;
+        if (flPower >= 1) flPower = 1;
+        if (blPower <= -1) blPower = -1;
+        if (blPower >= 1) blPower = 1;
 
-        //slow mode
-        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
-        if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.8; slowstate = 3; }
-        if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
+        if (blPower <= -1) blPower = -1;
+        if (blPower >= 1) blPower = 1;
+        if (blPower <= -1) blPower = -1;
+        if (brPower >= 1) brPower = 1;
 
         //divide by 2 to prevent overflow
         //drivetrainController.SetPower(
@@ -192,21 +194,24 @@ public class MecanumDrive extends OpMode {
 
 
         /// ARM CONTROL ///
-        armjointPosition = 0;
-        //if (gamepad2.dpad_left) armjointPosition = 0.88;
-        //if (gamepad2.dpad_right) armjointPosition = 0;
-        armController.SetPosition(gamepad2.right_stick_y, armjointPosition);
+        //armjointPosition = 0;
+        if (gamepad2.dpad_left) armController.SetJointPosition(0.9);
+        if (gamepad2.dpad_right) armController.SetJointPosition(0);
+        if (gamepad2.a) armController.SetBasePosition(1);
+        if (gamepad2.b) armController.SetBasePosition(0);
 
 
         /// LIFT CONTROL ///
         //if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
         //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
-
-        if (gamepad2.dpad_up) lift.setPower(-0.6);
-        else if (gamepad2.dpad_down) lift.setPower(0.1);
+        if (lift.getCurrentPosition() >= -1200) {
+            liftstate = 1;
+            if (gamepad2.dpad_up) lift.setPower(-0.3);
+            else if (gamepad2.dpad_down) lift.setPower(0.1);
+            else lift.setPower(-0.001); //resist Fg pushing down on lift
+        }
         else lift.setPower(0);
-
 
 
         /// DEBUG ///
@@ -215,6 +220,7 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("arm joint: ", armController.getArmJointPosition());
         telemetry.addData("Drive Power: ", flPower);
         telemetry.addData("Slow?", slowstate);
+        telemetry.addData("armbase pos", armController.getArmBasePosition());
         //telemetry.addData("fl Power: ", drivetrainController.FLPower());
         //telemetry.addData("fl Pos: ", drivetrainController.FLPos());
         telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");

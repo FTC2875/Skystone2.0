@@ -26,11 +26,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
         intake_left = hardwareMap.get(DcMotor.class, "intake_left");
         intake_right = hardwareMap.get(DcMotor.class, "intake_right");
 
-        front_right.setDirection(DcMotor.Direction.REVERSE);// hmmm...
-        back_right.setDirection(DcMotor.Direction.REVERSE);
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-
         front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //encoder modes for motors
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -53,8 +48,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             long end = t + 900;
             while(System.currentTimeMillis() <  end) {
                 front_left.setPower(0.2);
-                front_right.setPower(0.2);
-                back_left.setPower(0.2);
+                front_right.setPower(-0.2);
+                back_left.setPower(-0.2);
                 back_right.setPower(0.2);
             }
 

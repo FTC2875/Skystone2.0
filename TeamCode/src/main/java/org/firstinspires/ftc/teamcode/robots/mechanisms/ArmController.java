@@ -25,9 +25,18 @@ public class ArmController {
         armjoint.setPosition(armJointPosition);
     }
 
+    public void SetBasePosition(double armBasePosition){
+        armbase.setPosition(armBasePosition);
+    }
+
+    public void SetJointPosition(double armJointPosition){
+        armjoint.setPosition(armJointPosition);
+    }
+
     public double getArmJointPosition() {
         return armjoint.getPosition();
     }
+    public double getArmBasePosition() { return armbase.getPosition(); }
 
     public void BeginGrip() {
         // TODO implement grip
