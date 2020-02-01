@@ -133,7 +133,7 @@ public class MecanumDrive extends OpMode {
         //slow mode
         if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
         if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.8; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         //divide by 2 to prevent overflow
@@ -143,7 +143,7 @@ public class MecanumDrive extends OpMode {
         //        blPower/2,
         //        brPower/2);
 
-        frontLeft.setPower(flPower  );
+        frontLeft.setPower(flPower);
         frontRight.setPower(frPower);
         backLeft.setPower(blPower);
         backRight.setPower(brPower);
@@ -193,9 +193,9 @@ public class MecanumDrive extends OpMode {
 
         /// ARM CONTROL ///
         armjointPosition = 0;
-        if (gamepad2.dpad_left) armjointPosition = 0.88;
-        if (gamepad2.dpad_right) armjointPosition = 0;
-        armController.SetPosition(gamepad2.right_stick_y, gamepad2.right_stick_x);
+        //if (gamepad2.dpad_left) armjointPosition = 0.88;
+        //if (gamepad2.dpad_right) armjointPosition = 0;
+        armController.SetPosition(gamepad2.right_stick_y, armjointPosition);
 
 
         /// LIFT CONTROL ///
@@ -203,7 +203,9 @@ public class MecanumDrive extends OpMode {
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
         //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
 
-        lift.setPower(gamepad2.left_stick_y);
+        if (gamepad2.dpad_up) lift.setPower(-0.6);
+        else if (gamepad2.dpad_down) lift.setPower(0.1);
+        else lift.setPower(0);
 
 
 
@@ -211,7 +213,7 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("lift pos: ", lift.getCurrentPosition());
         telemetry.addData("liftstage", liftstage);
         telemetry.addData("arm joint: ", armController.getArmJointPosition());
-        telemetry.addData("Drive Power: ", powerFactor);
+        telemetry.addData("Drive Power: ", flPower);
         telemetry.addData("Slow?", slowstate);
         //telemetry.addData("fl Power: ", drivetrainController.FLPower());
         //telemetry.addData("fl Pos: ", drivetrainController.FLPos());
@@ -219,14 +221,14 @@ public class MecanumDrive extends OpMode {
         telemetry.update();
     }
 
-    public void moveLift(){
-        switch (liftstage) {
-            case (0): { lift.BeginMovingLift(0, 0.15);}
-            case(1): { lift.BeginMovingLift(200, 0.15); }
-            case(2): { lift.BeginMovingLift(400, 0.15); }
-            case(3): {lift.BeginMovingLift(600, 0.15); }
-        }
-    }
+//    public void moveLift(){
+//        switch (liftstage) {
+//            case (0): { lift.BeginMovingLift(0, 0.15);}
+//            case(1): { lift.BeginMovingLift(200, 0.15); }
+//            case(2): { lift.BeginMovingLift(400, 0.15); }
+//            case(3): {lift.BeginMovingLift(600, 0.15); }
+//        }
+//    }
 
 
     /// SOUNDS ///
