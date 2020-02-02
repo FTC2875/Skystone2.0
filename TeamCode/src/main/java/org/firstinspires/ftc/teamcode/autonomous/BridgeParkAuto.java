@@ -47,10 +47,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             long t = System.currentTimeMillis();
             long end = t + 900;
             while(System.currentTimeMillis() <  end) {
-                front_left.setPower(0.2);
-                front_right.setPower(-0.2);
-                back_left.setPower(-0.2);
-                back_right.setPower(0.2);
+                front_left.setPower(-0.2);
+                front_right.setPower(0.2);
+                back_left.setPower(0.2);
+                back_right.setPower(-0.2);
             }
 
 

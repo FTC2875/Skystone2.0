@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.Math;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.round;
 
 
 /**
@@ -106,7 +107,7 @@ public class MecanumDrive extends OpMode {
         //slow mode
         if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
         if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 0.9; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
@@ -155,7 +156,7 @@ public class MecanumDrive extends OpMode {
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
 
         double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
-
+        double currentdrawAMPS = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
 
 //        if the above doesn't work, use this
 //        drivetrainController.SetPower(
@@ -195,7 +196,7 @@ public class MecanumDrive extends OpMode {
 
         /// ARM CONTROL ///
         //armjointPosition = 0;
-        if (gamepad2.dpad_left) armController.SetJointPosition(0.9);
+        if (gamepad2.dpad_left && armController.getArmJointPosition() < 0.9) armController.SetJointPosition(armController.getArmJointPosition()+0.02);
         if (gamepad2.dpad_right) armController.SetJointPosition(0);
         if (gamepad2.a) armController.SetBasePosition(1);
         if (gamepad2.b) armController.SetBasePosition(0);
@@ -206,24 +207,19 @@ public class MecanumDrive extends OpMode {
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
         //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
         if (lift.getCurrentPosition() >= -1200) {
-            liftstate = 1;
             if (gamepad2.dpad_up) lift.setPower(-0.3);
-            else if (gamepad2.dpad_down) lift.setPower(0.1);
-            else lift.setPower(-0.001); //resist Fg pushing down on lift
+            if (gamepad2.dpad_down) lift.setPower(0.25);
+
+            if (!gamepad2.dpad_up  && !gamepad2.dpad_down) lift.setPower(-0.0009); //resist Fg pushing down on lift
         }
-        else lift.setPower(0);
+        else lift.setPower(0.05);
 
 
         /// DEBUG ///
         telemetry.addData("lift pos: ", lift.getCurrentPosition());
-        telemetry.addData("liftstage", liftstage);
-        telemetry.addData("arm joint: ", armController.getArmJointPosition());
-        telemetry.addData("Drive Power: ", flPower);
-        telemetry.addData("Slow?", slowstate);
-        telemetry.addData("armbase pos", armController.getArmBasePosition());
-        //telemetry.addData("fl Power: ", drivetrainController.FLPower());
-        //telemetry.addData("fl Pos: ", drivetrainController.FLPos());
+        telemetry.addData("Drive Power: ", powerFactor);
         telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
+        telemetry.addData("Total Current Draw:", Math.round(currentdrawAMPS * 100d) / 100d + "A");
         telemetry.update();
     }
 
