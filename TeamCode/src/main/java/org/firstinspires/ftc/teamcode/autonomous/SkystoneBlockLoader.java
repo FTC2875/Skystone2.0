@@ -93,20 +93,26 @@ public class SkystoneBlockLoader extends OpMode {
                 hardwareMap.get(DcMotor.class, "left_front"),
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
-                hardwareMap.get(DcMotor.class, "right_back"));
+                hardwareMap.get(DcMotor.class, "right_back"),
+                telemetry);
 
         blockHelperController = new BlockHelperController(
                 new FlipperController(
                         hardwareMap.get(Servo.class, "flipper1"),
-                        hardwareMap.get(Servo.class, "flipper2")),
+                        hardwareMap.get(Servo.class, "flipper2"),
+                        telemetry),
                 new ArmController(
                         hardwareMap.get(Servo.class, "armbase"),
-                        hardwareMap.get(Servo.class, "armjoint")),
+                        hardwareMap.get(Servo.class, "armjoint"),
+                        telemetry),
                 new IntakeController(
                         hardwareMap.get(DcMotor.class, "intake_left"),
-                        hardwareMap.get(DcMotor.class, "intake_right")),
+                        hardwareMap.get(DcMotor.class, "intake_right"),
+                        telemetry),
                 new LiftController(
-                        hardwareMap.get(DcMotor.class, "lift")), telemetry);
+                        hardwareMap.get(DcMotor.class, "lift"),
+                        telemetry),
+                telemetry);
 
         blockHelperController.run();
     }

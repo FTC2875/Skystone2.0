@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robots.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Usage: Implements intake controller.
  *
@@ -14,21 +16,25 @@ public class IntakeController {
 
     private DcMotor intake_left;
     private DcMotor intake_right;
+    private Telemetry telemetry;
 
-    public IntakeController(DcMotor intake_left, DcMotor intake_right) {
+    public IntakeController(DcMotor intake_left, DcMotor intake_right, Telemetry telemetry) {
         this.intake_left = intake_left;
         this.intake_right = intake_right;
+        this.telemetry = telemetry;
 
         intake_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void SetPosition(int leftIntakePosition, int rightIntakePosition) {
+        telemetry.addData("IntakeController:", "SetPosition: ", leftIntakePosition, rightIntakePosition);
         intake_left.setTargetPosition(leftIntakePosition);
         intake_right.setTargetPosition(rightIntakePosition);
     }
 
     public void BeginIntake(double leftIntakePower, double rightIntakePower) {
+        telemetry.addData("IntakeController:", "BeginIntake: ", leftIntakePower, rightIntakePower);
         intake_left.setPower(leftIntakePower);
         intake_right.setPower(rightIntakePower);
     }

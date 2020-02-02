@@ -75,26 +75,28 @@ public class MecanumDrive extends OpMode {
 
         intakeController = new IntakeController(
                 hardwareMap.get(DcMotor.class, "intake_left"),
-                hardwareMap.get(DcMotor.class, "intake_right"));
+                hardwareMap.get(DcMotor.class, "intake_right"),
+                telemetry);
 
         lift = new LiftController(
-                hardwareMap.get(DcMotor.class, "lift"));
+                hardwareMap.get(DcMotor.class, "lift"),
+                telemetry);
 
         armController = new ArmController(
                 hardwareMap.get(Servo.class, "armbase"),
-                hardwareMap.get(Servo.class, "armjoint"));
+                hardwareMap.get(Servo.class, "armjoint"),
+                telemetry);
 
         flipperController = new FlipperController(
                 hardwareMap.get(Servo.class, "flipper1"),
-                hardwareMap.get(Servo.class, "flipper2"));
-
+                hardwareMap.get(Servo.class, "flipper2"),
+                telemetry);
 
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
 
         expansionHub.setPhoneChargeEnabled(true);
        playdroid();
-
     }
 
 
@@ -117,7 +119,6 @@ public class MecanumDrive extends OpMode {
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe from leftstick x and y
         double strafeMag = Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
 
-
         //do more trig to find power
         double negStrafePower =  -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
         double posStrafePower =   Math.sin(strafeAngle+(0.25*Math.PI))*strafeMag;
@@ -139,12 +140,11 @@ public class MecanumDrive extends OpMode {
         if (blPower <= -1) blPower = -1;
         if (brPower >= 1) brPower = 1;
 
-        //divide by 2 to prevent overflow
         //drivetrainController.SetPower(
-        //       flPower/2,
-        //        frPower/2,
-        //        blPower/2,
-        //        brPower/2);
+        //       flPower,
+        //        frPower,
+        //        blPower,
+        //        brPower;
 
         frontLeft.setPower(flPower);
         frontRight.setPower(frPower);
