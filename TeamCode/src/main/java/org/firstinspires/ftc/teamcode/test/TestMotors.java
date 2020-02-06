@@ -44,10 +44,12 @@ public class TestMotors extends OpMode {
                 hardwareMap.get(DcMotor.class, "left_front"),
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
-                hardwareMap.get(DcMotor.class, "right_back"));
+                hardwareMap.get(DcMotor.class, "right_back"),
+                telemetry);
 
         liftController = new LiftController(
-                hardwareMap.get(DcMotor.class, "lift"));
+                hardwareMap.get(DcMotor.class, "lift"),
+                telemetry);
 
     }
     @Override

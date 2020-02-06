@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.Math;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.round;
 
 
 /**
@@ -74,26 +75,28 @@ public class MecanumDrive extends OpMode {
 
         intakeController = new IntakeController(
                 hardwareMap.get(DcMotor.class, "intake_left"),
-                hardwareMap.get(DcMotor.class, "intake_right"));
+                hardwareMap.get(DcMotor.class, "intake_right"),
+                telemetry);
 
         lift = new LiftController(
-                hardwareMap.get(DcMotor.class, "lift"));
+                hardwareMap.get(DcMotor.class, "lift"),
+                telemetry);
 
         armController = new ArmController(
                 hardwareMap.get(Servo.class, "armbase"),
-                hardwareMap.get(Servo.class, "armjoint"));
+                hardwareMap.get(Servo.class, "armjoint"),
+                telemetry);
 
         flipperController = new FlipperController(
                 hardwareMap.get(Servo.class, "flipper1"),
-                hardwareMap.get(Servo.class, "flipper2"));
-
+                hardwareMap.get(Servo.class, "flipper2"),
+                telemetry);
 
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
 
         expansionHub.setPhoneChargeEnabled(true);
        playdroid();
-
     }
 
 
@@ -102,13 +105,19 @@ public class MecanumDrive extends OpMode {
 
         /// DRIVETRAIN CONTROL ///
         //Strafing and rotation definition
+
+        //slow mode
+        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
+        if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 0.9; slowstate = 3; }
+        if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
+
         double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
         double strafex = powerFactor * -gamepad1.left_stick_x; //lateral movement
         double turn  = powerFactor * -gamepad1.right_stick_x; //rotation
 
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe from leftstick x and y
-        double strafeMag = 0.7 * Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
-        //0.7 is correction factor, max val with this is 1.414 to scale to 1
+        double strafeMag = Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
 
         //do more trig to find power
         double negStrafePower =  -Math.sin(strafeAngle-(0.25*Math.PI))*strafeMag;
@@ -120,30 +129,24 @@ public class MecanumDrive extends OpMode {
         double flPower = posStrafePower + turn;
         double brPower = posStrafePower - turn;
 
-//        if (flPower < -1) flPower = -1;
-//        if (flPower > 1) flPower = 1;
-//        if (blPower < -1) blPower = -1;
-//        if (blPower > 1) blPower = 1;
-//
-//        if (blPower < -1) blPower = -1;
-//        if (blPower > 1) blPower = 1;
-//        if (blPower < -1) blPower = -1;
-//        if (brPower > 1) brPower = 1;
+        //overflow prevention
+        if (flPower <= -1) flPower = -1;
+        if (flPower >= 1) flPower = 1;
+        if (blPower <= -1) blPower = -1;
+        if (blPower >= 1) blPower = 1;
 
-        //slow mode
-        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
-        if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
-        if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
+        if (blPower <= -1) blPower = -1;
+        if (blPower >= 1) blPower = 1;
+        if (blPower <= -1) blPower = -1;
+        if (brPower >= 1) brPower = 1;
 
-        //divide by 2 to prevent overflow
         //drivetrainController.SetPower(
-        //       flPower/2,
-        //        frPower/2,
-        //        blPower/2,
-        //        brPower/2);
+        //       flPower,
+        //        frPower,
+        //        blPower,
+        //        brPower;
 
-        frontLeft.setPower(flPower  );
+        frontLeft.setPower(flPower);
         frontRight.setPower(frPower);
         backLeft.setPower(blPower);
         backRight.setPower(brPower);
@@ -153,7 +156,7 @@ public class MecanumDrive extends OpMode {
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
 
         double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
-
+        double currentdrawAMPS = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
 
 //        if the above doesn't work, use this
 //        drivetrainController.SetPower(
@@ -192,41 +195,42 @@ public class MecanumDrive extends OpMode {
 
 
         /// ARM CONTROL ///
-        armjointPosition = 0;
-        if (gamepad2.dpad_left) armjointPosition = 0.88;
-        if (gamepad2.dpad_right) armjointPosition = 0;
-        armController.SetPosition(gamepad2.right_stick_y, gamepad2.right_stick_x);
+        //armjointPosition = 0;
+        if (gamepad2.dpad_left && armController.getArmJointPosition() < 0.9) armController.SetJointPosition(armController.getArmJointPosition()+0.02);
+        if (gamepad2.dpad_right) armController.SetJointPosition(0);
+        if (gamepad2.a) armController.SetBasePosition(1);
+        if (gamepad2.b) armController.SetBasePosition(0);
 
 
         /// LIFT CONTROL ///
         //if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
         //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
+        if (lift.getCurrentPosition() >= -1200) {
+            if (gamepad2.dpad_up) lift.setPower(-0.3);
+            if (gamepad2.dpad_down) lift.setPower(0.25);
 
-        lift.setPower(gamepad2.left_stick_y);
-
+            if (!gamepad2.dpad_up  && !gamepad2.dpad_down) lift.setPower(-0.0009); //resist Fg pushing down on lift
+        }
+        else lift.setPower(0.05);
 
 
         /// DEBUG ///
         telemetry.addData("lift pos: ", lift.getCurrentPosition());
-        telemetry.addData("liftstage", liftstage);
-        telemetry.addData("arm joint: ", armController.getArmJointPosition());
         telemetry.addData("Drive Power: ", powerFactor);
-        telemetry.addData("Slow?", slowstate);
-        //telemetry.addData("fl Power: ", drivetrainController.FLPower());
-        //telemetry.addData("fl Pos: ", drivetrainController.FLPos());
         telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
+        telemetry.addData("Total Current Draw:", Math.round(currentdrawAMPS * 100d) / 100d + "A");
         telemetry.update();
     }
 
-    public void moveLift(){
-        switch (liftstage) {
-            case (0): { lift.BeginMovingLift(0, 0.15);}
-            case(1): { lift.BeginMovingLift(200, 0.15); }
-            case(2): { lift.BeginMovingLift(400, 0.15); }
-            case(3): {lift.BeginMovingLift(600, 0.15); }
-        }
-    }
+//    public void moveLift(){
+//        switch (liftstage) {
+//            case (0): { lift.BeginMovingLift(0, 0.15);}
+//            case(1): { lift.BeginMovingLift(200, 0.15); }
+//            case(2): { lift.BeginMovingLift(400, 0.15); }
+//            case(3): {lift.BeginMovingLift(600, 0.15); }
+//        }
+//    }
 
 
     /// SOUNDS ///
