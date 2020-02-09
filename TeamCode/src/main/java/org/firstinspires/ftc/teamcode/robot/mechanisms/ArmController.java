@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.mechanisms;
+package org.firstinspires.ftc.teamcode.robot.mechanisms;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -25,18 +25,18 @@ public class ArmController {
     }
 
     public void SetPosition(double armBasePosition, double armJointPosition) {
-        telemetry.addData("ArmController:", "SetPosition: ", armBasePosition, armJointPosition);
+        //telemetry.addData("ArmController:", "SetPosition: ", armBasePosition, armJointPosition);
         armbase.setPosition(armBasePosition);
         armjoint.setPosition(armJointPosition);
     }
 
     public void SetBasePosition(double armBasePosition){
-        telemetry.addData("ArmController:", "SetBasePosition", armBasePosition);
+        //telemetry.addData("ArmController:", "SetBasePosition", armBasePosition);
         armbase.setPosition(armBasePosition);
     }
 
     public void SetJointPosition(double armJointPosition){
-        telemetry.addData("ArmController:", "SetJointPosition", armJointPosition);
+        //telemetry.addData("ArmController:", "SetJointPosition", armJointPosition);
         armjoint.setPosition(armJointPosition);
     }
 

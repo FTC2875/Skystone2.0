@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;/*
+package org.firstinspires.ftc.teamcode.test;/*
 
 Copyright (c) 2019 OpenFTC Team
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,8 +45,9 @@ import java.util.Random;
 import static org.opencv.core.Core.minMaxLoc;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
+@Disabled
 @Autonomous
-public class SkystonePhone extends LinearOpMode {
+public class phoneAuto extends LinearOpMode {
     OpenCvCamera phonecam;
     SkystonePipeline SkystonePipeline;
 

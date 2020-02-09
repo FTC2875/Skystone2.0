@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@Autonomous public class BridgeParkAuto extends LinearOpMode {
+@Autonomous public class BridgePark extends LinearOpMode {
 
     private DcMotor front_left = null; //declare motors
     private DcMotor front_right = null;
@@ -41,16 +41,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             int skystonethresh = 1150; //24" to blocks is 1125ticks
             int intakethresh = 1200;
 
-
-            sleep(10000);
-
             long t = System.currentTimeMillis();
             long end = t + 900;
             while(System.currentTimeMillis() <  end) {
-                front_left.setPower(-0.2);
-                front_right.setPower(0.2);
-                back_left.setPower(0.2);
-                back_right.setPower(-0.2);
+                front_left.setPower(-0.5);
+                front_right.setPower(0.5);
+                back_left.setPower(0.5);
+                back_right.setPower(-0.5);
             }
 
 

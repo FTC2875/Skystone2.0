@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.mechanisms;
+package org.firstinspires.ftc.teamcode.robot.mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -27,10 +27,10 @@ public class LiftController {
         this.telemetry = telemetry;
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       // lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //if motor.setPower(0), set these motors to brake
-        //lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         double liftposition = lift.getCurrentPosition();
     }
 
@@ -64,6 +64,9 @@ public class LiftController {
     public double getCurrentPosition() {
         return lift.getCurrentPosition();
     }
+
+    public void ZeroBrake() {lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
+    public void ZeroCoast() {lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
 
     public boolean IsMoving() {
         return lift.isBusy();

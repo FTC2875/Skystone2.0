@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.mechanisms;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+package org.firstinspires.ftc.teamcode.robot.mechanisms;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -12,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *
  * Author: Daniel
  */
-public class BlockHelperController extends Thread {
+public class FullAutoHelper extends Thread {
     private FlipperController flipperController;
     private ArmController armController;
     private IntakeController intakeController;
@@ -30,7 +27,7 @@ public class BlockHelperController extends Thread {
 
     private RunningStates runningState = RunningStates.Ready;
 
-    public BlockHelperController(
+    public FullAutoHelper(
             FlipperController flipperController,
             ArmController armController,
             IntakeController intakeController,
@@ -134,7 +131,7 @@ public class BlockHelperController extends Thread {
             Thread.sleep(millisec);
         }
         catch(InterruptedException e) {
-            telemetry.addData("BlockHelperController: ", "Wait interrupted", e.getMessage());
+            telemetry.addData("FullAutoHelper: ", "Wait interrupted", e.getMessage());
         }
     }
 }

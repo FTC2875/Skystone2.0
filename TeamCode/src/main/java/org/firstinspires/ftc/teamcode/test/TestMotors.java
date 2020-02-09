@@ -3,13 +3,9 @@ package org.firstinspires.ftc.teamcode.test;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
-
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
 
 
 /**

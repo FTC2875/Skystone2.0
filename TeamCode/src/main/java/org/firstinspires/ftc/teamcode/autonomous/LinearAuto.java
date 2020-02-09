@@ -45,7 +45,7 @@ import static org.opencv.core.Core.minMaxLoc;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 
 @Autonomous
-public class SkystoneAuto extends LinearOpMode {
+public class LinearAuto extends LinearOpMode {
     OpenCvCamera webcam;
     SkystonePipeline SkystonePipeline;
 
@@ -107,6 +107,10 @@ public class SkystoneAuto extends LinearOpMode {
         Mat inputrgb = new Mat();
         Mat input2 = new Mat();
         int autostate = 0;
+        public void automode(){
+            processFrame(input2);
+           // autostate ==1;
+        }
 
 
         public Mat processFrame(Mat input) {
@@ -162,32 +166,68 @@ public class SkystoneAuto extends LinearOpMode {
                 }
 
 
-                front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-                if (autostate == 0) {
-
-                    front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                    int skystonethresh = 50; //24" to blocks is 1125ticks
 
 
-                    front_left.setTargetPosition(skystonethresh);
-                    back_left.setTargetPosition(skystonethresh);
-                    front_right.setTargetPosition(skystonethresh);
-                    back_right.setTargetPosition(skystonethresh);
+//                    front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                    back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+//                    int skystonethresh = 50; //24" to blocks is 1125ticks
+//
+//
+//                    front_left.setTargetPosition(skystonethresh);
+//                    back_left.setTargetPosition(skystonethresh);
+//                    front_right.setTargetPosition(skystonethresh);
+//                    back_right.setTargetPosition(skystonethresh);
 
 
-                    front_left.setPower(0.5);
-                    front_right.setPower(-0.5);
-                    back_left.setPower(-0.5);
-                    back_right.setPower(0.5);
+
+                         if (templateScore < templatethresh){
+
+                        front_left.setPower(-0.5); //strafe to find it
+                        front_right.setPower(-0.5);
+                        back_left.setPower(0.5);
+                        back_right.setPower(0.5);
+                    }
+
+                         if(templateScore > templatethresh){
+                             if(center.x < 320){ //640 by 480, if on left
+                                 front_left.setPower(-0.2);
+                                 front_right.setPower(-0.2);
+                                 back_left.setPower(-0.2);
+                                 back_right.setPower(-0.2);
+                             }
+                                 if (center.x > 320) {
+                                     front_left.setPower(0.2);
+                                     front_right.setPower(0.2);
+                                     back_left.setPower(0.2);
+                                     back_right.setPower(0.2);
+                                 }
+                         }
+
+                    long t = System.currentTimeMillis();
+                    long end = t + 750;
+                    while(System.currentTimeMillis() <  end){
+                        front_left.setPower(-0.3); //strafe to find it
+                        front_right.setPower(-0.3);
+                        back_left.setPower(0.3);
+                        back_right.setPower(0.3);
+                    }
+
+//                    long t = System.currentTimeMillis();
+//                    long end = t + 1000;
+//                    while(System.currentTimeMillis() <  end){
+//                        intake + move forward
+//                    }
+//
+
 
                     while (front_left.isBusy() && front_right.isBusy() && back_left.isBusy() && back_right.isBusy()) {
                         telemetry.addData("motor position:", front_left.getCurrentPosition());
@@ -200,7 +240,7 @@ public class SkystoneAuto extends LinearOpMode {
                     back_right.setPower(0);
 
                     autostate = 1;
-                }
+
 
                 if (templateScore <= templatethresh && autostate == 1){ //doesn't see skystone yet
                     front_left.setPower(-0.2); //move left until it sees it
@@ -217,11 +257,16 @@ public class SkystoneAuto extends LinearOpMode {
                 }
 
 
-
+                telemetry.addData("center x", center.x);
+                telemetry.addData("center y", center.y);
                 telemetry.update();
             }
 
             return input; //render to viewport
+
+        }
+
+        public void forward(){
 
         }
 
