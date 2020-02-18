@@ -21,6 +21,7 @@ SOFTWARE. */
 import android.media.MediaPlayer;
 import android.os.Environment;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -29,27 +30,29 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.camera.CameraController;
-import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.BlockHelperController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.IntakeController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
+import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.ArmController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.FullAutoHelper;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.FlipperController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="SkystoneBlockLoader")
-public class SkystoneBlockLoader extends OpMode {
+@Autonomous(name="FullAuto")
+public class FullAuto extends OpMode {
 
     private CameraController cameraController;
 
     private DrivetrainController drivetrainController;
-    private BlockHelperController blockHelperController;
+    private FullAutoHelper fullAutoHelper;
 
     // Count of processed blocks
     private int blockCount = 0;
+
+
 
     // The robot states
     private enum RobotStates
@@ -65,6 +68,8 @@ public class SkystoneBlockLoader extends OpMode {
     }
 
     private RobotStates robotState = RobotStates.Initialization;
+
+    BNO055IMU imu;
 
     @Override
     public void init() {
@@ -96,7 +101,7 @@ public class SkystoneBlockLoader extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_back"),
                 telemetry);
 
-        blockHelperController = new BlockHelperController(
+        fullAutoHelper = new FullAutoHelper(
                 new FlipperController(
                         hardwareMap.get(Servo.class, "flipper1"),
                         hardwareMap.get(Servo.class, "flipper2"),
@@ -114,7 +119,17 @@ public class SkystoneBlockLoader extends OpMode {
                         telemetry),
                 telemetry);
 
-        blockHelperController.run();
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+            parameters.mode                = BNO055IMU.SensorMode.IMU;
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled      = false;
+
+            imu.initialize(parameters);
+
+        fullAutoHelper.run();
     }
 
     @Override
@@ -145,9 +160,9 @@ public class SkystoneBlockLoader extends OpMode {
 
             case WaitingToGrabBlock: {
                 // Waiting until block is grabbed
-                if (blockHelperController.GetRunningState() == BlockHelperController.RunningStates.Ready) {
+                if (fullAutoHelper.GetRunningState() == FullAutoHelper.RunningStates.Ready) {
 
-                    blockHelperController.Wait(1000);
+                    fullAutoHelper.Wait(1000);
                     UnloadBlock();
                 }
                 break;
@@ -165,13 +180,14 @@ public class SkystoneBlockLoader extends OpMode {
 
             case WaitingForBlockToDrop: {
                 // Waiting dropping the block
-                if (blockHelperController.GetRunningState() == BlockHelperController.RunningStates.Ready) {
+                if (fullAutoHelper.GetRunningState() == FullAutoHelper.RunningStates.Ready) {
                     // Processed a block
                     blockCount++;
                     telemetry.addData("Robot: ", "DroppedBlock ", blockCount);
+                    telemetry.update();
 
                     // TODO: go again?
-                    blockHelperController.Wait(5000);
+                    fullAutoHelper.Wait(5000);
 
                     LookForBlock();
                 }
@@ -181,6 +197,7 @@ public class SkystoneBlockLoader extends OpMode {
             case Done: {
                 // TODO: no more blocks, what now?
                 telemetry.addData("Robot: ", "Done");
+                telemetry.update();
                 break;
             }
 
@@ -195,13 +212,14 @@ public class SkystoneBlockLoader extends OpMode {
         robotState = RobotStates.Done;
 
         // Terminate the background thread
-        blockHelperController.interrupt();
+        fullAutoHelper.interrupt();
 
         try {
-            blockHelperController.join();
+            fullAutoHelper.join();
         }
         catch(InterruptedException e) {
-            telemetry.addData("blockHelperController: ", "thread exited");
+            telemetry.addData("fullAutoHelper: ", "thread exited");
+            telemetry.update();
         }
     }
 
@@ -213,17 +231,20 @@ public class SkystoneBlockLoader extends OpMode {
 
             case ObjectFound: {
                 telemetry.addData("Camera: ", "ObjectFound");
+                telemetry.update();
                 ApproachBlock();
                 break;
             }
 
             case ObjectLost: {
                 telemetry.addData("Camera: ", "ObjectLost");
+                telemetry.update();
 
                 // Stop driving to load the block
                 if (drivetrainController.IsMoving()) {
 
                     telemetry.addData("Robot: ", "Stop");
+                    telemetry.update();
                     drivetrainController.Stop();
                 }
 
@@ -237,14 +258,15 @@ public class SkystoneBlockLoader extends OpMode {
         if (robotState == RobotStates.LookingForBlock) {
 
             telemetry.addData("Robot: ", "Error: already LookingForBlock");
+            telemetry.update();
             return;
         }
 
         robotState = RobotStates.LookingForBlock;
 
         telemetry.addData("Robot: ", "LookingForBlock");
+        telemetry.update();
 
-        // Scan for a block or move to unload it
         if (drivetrainController.IsMoving()) {
             drivetrainController.Stop();
         }
@@ -256,12 +278,14 @@ public class SkystoneBlockLoader extends OpMode {
         if (robotState == RobotStates.ApproachingBlock) {
 
             telemetry.addData("Robot: ", "Error: already ApproachingBlock");
+            telemetry.update();
             return;
         }
 
         robotState = RobotStates.ApproachingBlock;
 
         telemetry.addData("Robot: ", "ApproachingBlock");
+        telemetry.update();
 
         // Drive to load the block
         if (drivetrainController.IsMoving()) {
@@ -275,26 +299,30 @@ public class SkystoneBlockLoader extends OpMode {
         if (robotState == RobotStates.WaitingToGrabBlock) {
 
             telemetry.addData("Robot: ", "Error: already WaitingToGrabBlock");
+            telemetry.update();
             return;
         }
 
         robotState = RobotStates.WaitingToGrabBlock;
 
         telemetry.addData("Robot: ", "WaitingToGrabBlock");
+        telemetry.update();
 
-        blockHelperController.BeginLoad();
+        fullAutoHelper.BeginLoad();
     }
 
     private void UnloadBlock() {
         if (robotState == RobotStates.GoingToUnloadBlock) {
 
             telemetry.addData("Robot: ", "Error: already GoingToUnloadBlock");
+            telemetry.update();
             return;
         }
 
         robotState = RobotStates.GoingToUnloadBlock;
 
         telemetry.addData("Robot: ", "GoingToUnloadBlock");
+        telemetry.update();
 
         // Drive to load the block
         if (drivetrainController.IsMoving()) {
@@ -309,8 +337,9 @@ public class SkystoneBlockLoader extends OpMode {
     private void DropBlock() {
         if (robotState == RobotStates.WaitingToDropBlock && !drivetrainController.IsMoving()) {
             telemetry.addData("Robot: ", "WaitingToDropBlock");
+            telemetry.update();
 
-            blockHelperController.BeginUnload();
+            fullAutoHelper.BeginUnload();
 
             robotState = RobotStates.WaitingForBlockToDrop;
         }

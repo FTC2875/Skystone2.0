@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.robots.mechanisms;
+package org.firstinspires.ftc.teamcode.robot.mechanisms;
 
 import com.qualcomm.robotcore.hardware.Servo;
 

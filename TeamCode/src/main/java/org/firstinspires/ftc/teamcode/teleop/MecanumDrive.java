@@ -2,21 +2,19 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import android.media.MediaPlayer;
 
-import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.robots.drivetrain.DrivetrainController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.ArmController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.FlipperController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.IntakeController;
-import org.firstinspires.ftc.teamcode.robots.mechanisms.LiftController;
+import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.ArmController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.FlipperController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.IntakeController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
 import org.openftc.revextensions2.ExpansionHubEx;
 
-import java.io.File;
 import java.lang.Math;
 
 import static java.lang.Math.abs;
@@ -51,7 +49,7 @@ public class MecanumDrive extends OpMode {
     private FlipperController flipperController;
 
     private boolean flipped = false;
-    private double powerFactor = 0.5;
+    private double powerFactor = 0.3;
     private double armjointPosition;
     private int slowstate = 1;
     private int liftstate = 0;
@@ -64,6 +62,9 @@ public class MecanumDrive extends OpMode {
 
     private ExpansionHubEx expansionHub;
     private ExpansionHubEx expansionHub2;
+
+    double liftposition = 0;
+    double liftinit;
 
     @Override
     public void init() {
@@ -92,11 +93,18 @@ public class MecanumDrive extends OpMode {
                 hardwareMap.get(Servo.class, "flipper2"),
                 telemetry);
 
+        //IMU = new IMUController(hardwareMap.get(BNO055IMU.class, "imu";)
+
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
 
         expansionHub.setPhoneChargeEnabled(true);
-       playdroid();
+        armController.SetBasePosition(0);
+
+        liftinit = lift.getCurrentPosition();
+        armController.SetJointPosition(0);
+
+        playdroid();
     }
 
 
@@ -106,10 +114,12 @@ public class MecanumDrive extends OpMode {
         /// DRIVETRAIN CONTROL ///
         //Strafing and rotation definition
 
+        liftposition = lift.getCurrentPosition() - liftinit;
+
         //slow mode
-        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.5; slowstate = 2;}
+        if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.3; slowstate = 2;}
         if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 0.9; slowstate = 3; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
@@ -135,9 +145,9 @@ public class MecanumDrive extends OpMode {
         if (blPower <= -1) blPower = -1;
         if (blPower >= 1) blPower = 1;
 
-        if (blPower <= -1) blPower = -1;
-        if (blPower >= 1) blPower = 1;
-        if (blPower <= -1) blPower = -1;
+        if (frPower <= -1) frPower = -1;
+        if (frPower >= 1) frPower = 1;
+        if (brPower <= -1) brPower = -1;
         if (brPower >= 1) brPower = 1;
 
         //drivetrainController.SetPower(
@@ -196,7 +206,7 @@ public class MecanumDrive extends OpMode {
 
         /// ARM CONTROL ///
         //armjointPosition = 0;
-        if (gamepad2.dpad_left && armController.getArmJointPosition() < 0.9) armController.SetJointPosition(armController.getArmJointPosition()+0.02);
+        if (gamepad2.dpad_left && armController.getArmJointPosition() < 0.9) armController.SetJointPosition(armController.getArmJointPosition()+0.025);
         if (gamepad2.dpad_right) armController.SetJointPosition(0);
         if (gamepad2.a) armController.SetBasePosition(1);
         if (gamepad2.b) armController.SetBasePosition(0);
@@ -205,18 +215,23 @@ public class MecanumDrive extends OpMode {
         /// LIFT CONTROL ///
         //if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
-        //if (gamepad2.dpad_down && liftstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
-        if (lift.getCurrentPosition() >= -1200) {
-            if (gamepad2.dpad_up) lift.setPower(-0.3);
-            if (gamepad2.dpad_down) lift.setPower(0.25);
+        //if (gamepad2.dpad_down && liftwstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
+        //if (liftposition >= -1200) {double liftinit = lift.getCurrentPosition();
+            if (gamepad2.dpad_up) lift.setPower(-0.25);
+            if (gamepad2.dpad_down) lift.setPower(0.1);
+                                                        //TODO LIFT STATE MACHINE FOR MAX HEIGHT
+            if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper) lift.setPower(-0.0009); //resist Fg pushing down on lift
+        //}
+        //else lift.setPower(0.05);
 
-            if (!gamepad2.dpad_up  && !gamepad2.dpad_down) lift.setPower(-0.0009); //resist Fg pushing down on lift
+        if(gamepad2.left_bumper && !gamepad2.dpad_down) {
+            //lift.ZeroCoast();
+            lift.setPower(0.4);
         }
-        else lift.setPower(0.05);
 
 
         /// DEBUG ///
-        telemetry.addData("lift pos: ", lift.getCurrentPosition());
+        telemetry.addData("lift pos: ", liftposition);
         telemetry.addData("Drive Power: ", powerFactor);
         telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
         telemetry.addData("Total Current Draw:", Math.round(currentdrawAMPS * 100d) / 100d + "A");

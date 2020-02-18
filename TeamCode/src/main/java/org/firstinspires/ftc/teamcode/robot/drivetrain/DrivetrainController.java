@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.robots.drivetrain;
+package org.firstinspires.ftc.teamcode.robot.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
- * Usage: Implements drivetrain controller.
+ * Usage: Implements a controller for the drivetrain.
  *
  *
  *
@@ -37,10 +37,10 @@ public class DrivetrainController {
 
         this.telemetry = telemetry;
 
-        front_left.setDirection(DcMotor.Direction.FORWARD);
-        front_right.setDirection(DcMotor.Direction.REVERSE);
-        back_left.setDirection(DcMotor.Direction.FORWARD);
-        back_right.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_right.setDirection(DcMotor.Direction.FORWARD);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         resetEncoders();
 
@@ -85,8 +85,8 @@ public class DrivetrainController {
         back_right.setTargetPosition(-targetPosition); //back right has reverse polarity
 
         front_left.setPower(0.2);
-        front_right.setPower(-0.2);
-        back_left.setPower(-0.2);
+        front_right.setPower(0.2);
+        back_left.setPower(0.2);
         back_right.setPower(0.2);
     }
 
@@ -107,8 +107,8 @@ public class DrivetrainController {
         front_right.setTargetPosition(targetPosition);
         back_right.setTargetPosition(-targetPosition);
 
-        front_left.setPower(-0.2); //move left until it sees it
-        front_right.setPower(-0.2);
+        front_left.setPower(0.2); //move left until it sees it
+        front_right.setPower(0.2);
         back_left.setPower(-0.2);
         back_right.setPower(-0.2);
     }
