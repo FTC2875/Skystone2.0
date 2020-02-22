@@ -190,7 +190,7 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        telemetry.addData("drivetrain:", "setpower: ", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        telemetry.addData("drivetrain:", "setpower: %d, %d, %d, %d", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         front_left.setPower(frontLeftPower);
         front_right.setPower(frontRightPower);
         back_left.setPower(backLeftPower);
