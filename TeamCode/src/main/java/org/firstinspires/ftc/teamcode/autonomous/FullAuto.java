@@ -166,7 +166,6 @@ public class FullAuto extends OpMode {
         fullAutoHelper.run();
     }
 
-    @Override
     public void loop() {
 
         switch (robotState) {
@@ -260,6 +259,8 @@ public class FullAuto extends OpMode {
     private void ProcessCameraState() {
         switch (cameraController.State) {
             case Undetermined: {
+                telemetry.addData("Camera: ", "Object Undetermined");
+                telemetry.update();
                 break;
             }
 
@@ -284,7 +285,7 @@ public class FullAuto extends OpMode {
 
                 GrabBlock();
                 break;
-            }
+                    }
         }
     }
 
