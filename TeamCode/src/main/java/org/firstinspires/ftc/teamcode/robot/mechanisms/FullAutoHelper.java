@@ -23,6 +23,8 @@ public class FullAutoHelper extends Thread {
     public enum RunningStates
     {
         Ready,
+        BeginLoading,
+        BeginUnloading,
         Loading,
         Unloading,
     }
@@ -58,12 +60,16 @@ public class FullAutoHelper extends Thread {
     }
 
     public void Start() {
-        this.start();
-        this.setName("FullAutoHelper");
+        if (!this.isAlive()) {
+            telemetry.addData("FullAutoHelper: ", "start thread");
+            this.start();
+            this.setName("FullAutoHelper");
+        }
     }
 
     public void Stop() {
         if (this.isAlive()) {
+            telemetry.addData("FullAutoHelper: ", "stop thread");
             this.interrupt();
         }
     }
@@ -76,11 +82,11 @@ public class FullAutoHelper extends Thread {
 
         while (isAlive()) {
             switch (runningState) {
-                case Loading:
+                case BeginLoading:
                     Load();
                     break;
 
-                case Unloading:
+                case BeginUnloading:
                     Unload();
                     break;
             }
@@ -93,7 +99,7 @@ public class FullAutoHelper extends Thread {
         // Assumes ready starting position
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
-        SetRunningState(RunningStates.Loading);
+        SetRunningState(RunningStates.BeginLoading);
     }
 
     private void Load() {
@@ -102,6 +108,7 @@ public class FullAutoHelper extends Thread {
         // Must wait after each operation before starting the next, unless both can run together
 
         telemetry.addData("FullAutoHelper: ", "Loading started");
+        SetRunningState(RunningStates.Loading);
 
         // TODO: fix the load sequence
 
@@ -128,7 +135,7 @@ public class FullAutoHelper extends Thread {
     }
 
     public void BeginUnload() {
-        SetRunningState(RunningStates.Unloading);
+        SetRunningState(RunningStates.BeginUnloading);
     }
 
     private void Unload() {
@@ -137,6 +144,7 @@ public class FullAutoHelper extends Thread {
         // Must wait after each operation before starting the next, unless both can run together
 
         telemetry.addData("FullAutoHelper: ", "Unloading started");
+        SetRunningState(RunningStates.Unloading);
 
         // TODO: fix the unload sequence
 
