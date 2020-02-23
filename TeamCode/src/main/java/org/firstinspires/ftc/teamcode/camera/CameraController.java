@@ -27,6 +27,8 @@ public class CameraController extends OpenCvPipeline {
     private double templateScore =  0;
     private Mat skystoneTemplateImage;
 
+    public Point center;
+
     public enum States {
         Undetermined,
         ObjectFound,
@@ -48,6 +50,7 @@ public class CameraController extends OpenCvPipeline {
 
     }
 
+
     public Mat processFrame(Mat input) {
 
         Mat inputrgb = new Mat();
@@ -68,9 +71,14 @@ public class CameraController extends OpenCvPipeline {
 
         templateScore = maxVal;
 
+        double xmid = matchLoc.x + skystoneTemplateImage.cols()/2; //divide by 2 for midpoint of width/height of box + its location
+        double ymid = matchLoc.y + skystoneTemplateImage.rows()/2;
+        center = new Point(xmid, ymid);
+
         if (templateScore > 0.5) {
             State = States.ObjectFound;
             Imgproc.rectangle(input, matchLoc, new Point(matchLoc.x + skystoneTemplateImage.cols(), matchLoc.y + skystoneTemplateImage.rows()), new Scalar(0, 255, 0), 5);
+            Imgproc.drawMarker(input,center, new Scalar(240,130,240));
         }
         else
         {
@@ -85,4 +93,5 @@ public class CameraController extends OpenCvPipeline {
 
         return input; //render to viewport
     }
+
 }

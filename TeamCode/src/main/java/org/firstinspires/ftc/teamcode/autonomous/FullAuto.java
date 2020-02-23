@@ -27,6 +27,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.lang.Math.*;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.camera.CameraController;
@@ -51,6 +53,13 @@ public class FullAuto extends OpMode {
     private DrivetrainController drivetrainController;
     private FullAutoHelper fullAutoHelper;
 
+    private double ticks = 767.2; //# encoder ticks per revolution
+    private double wheelC = 100 * 0.0393701 * Math.PI; //100mm wheel diameter to circumference in inches
+    private double distanceToBlock = 30; //inches to skystone accounting for robot width
+
+    private int ticksToDetect = (int)(ticks * ((distanceToBlock - 15) / wheelC)); //~1860, 15 inches for CV to safely detect
+    private int ticksToBlock = (int)((ticks * (distanceToBlock / wheelC)) - ticksToDetect); //remaining ticks to stones
+
     // Count of processed blocks
     private int blockCount = 0;
 
@@ -62,11 +71,14 @@ public class FullAuto extends OpMode {
     {
         Initialization,
         LookingForBlock,
+        MoveToBlock,
         ApproachingBlock,
         WaitingToGrabBlock,
+        DrivingToFoundation,
         GoingToUnloadBlock,
         WaitingToDropBlock,
         WaitingForBlockToDrop,
+        MoveBackToBlock,
         Done
     }
 
@@ -98,6 +110,7 @@ public class FullAuto extends OpMode {
         cameraController = new CameraController(openCvCamera, 640, 480, OpenCvCameraRotation.UPRIGHT, templateImageFileName);
 
         // Create all controllers
+
 
         if (testing) {
             drivetrainController = new DrivetrainController(
@@ -188,10 +201,16 @@ public class FullAuto extends OpMode {
                 break;
             }
 
+            case MoveToBlock: {
+                AlignWithBlock();
+                //TODO: move left and right for alignment with the block, compare center.x to mid point of viewframe
+            }
+
             case ApproachingBlock: {
                 ProcessCameraState();
                 break;
             }
+
 
             case WaitingToGrabBlock: {
                 // Waiting until block is grabbed
@@ -200,6 +219,11 @@ public class FullAuto extends OpMode {
                     fullAutoHelper.Wait(1000);
                     UnloadBlock();
                 }
+                break;
+            }
+
+            case DrivingToFoundation: {
+                // TODO: move to foundation side
                 break;
             }
 
@@ -226,6 +250,10 @@ public class FullAuto extends OpMode {
                     LookForBlock();
                 }
                 break;
+            }
+
+            case MoveBackToBlock: {
+                //TODO move back to other side for second loop
             }
 
             case Done: {
@@ -255,7 +283,9 @@ public class FullAuto extends OpMode {
             }
 
             case ObjectFound: {
-                telemetry.addData("Camera: ", "ObjectFound");
+                telemetry.addLine("Camera: ObjectFound at ");
+                telemetry.addData("x: ", cameraController.center.x);
+                telemetry.addData("y: ", cameraController.center.y);
                 ApproachBlock();
                 break;
             }
@@ -291,7 +321,17 @@ public class FullAuto extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginScan(950);
+        drivetrainController.BeginScan(ticksToDetect);
+    }
+
+    private void AlignWithBlock(){
+        if (robotState == RobotStates.MoveToBlock) {
+            telemetry.addData("Robot: ", "Error: already MovingToBlock");
+            return;
+        } //TODO: Align with the block by moving left and right and processing camerastate
+
+
+
     }
 
     private void ApproachBlock() {
@@ -310,8 +350,9 @@ public class FullAuto extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginApproach(50);
+        drivetrainController.BeginApproach(ticksToBlock);
     }
+
 
     private void GrabBlock() {
         if (robotState == RobotStates.WaitingToGrabBlock) {

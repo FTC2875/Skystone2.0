@@ -154,7 +154,7 @@ public class LinearAuto extends LinearOpMode {
 
                 templateScore = maxVal;
 
-                double xmid = matchLoc.x + templ.cols()/2; //divide by 2 for midpoint of width/heigioht of box + its location
+                double xmid = matchLoc.x + templ.cols()/2; //divide by 2 for midpoint of width/height of box + its location
                 double ymid = matchLoc.y + templ.rows()/2;
                 Point center = new Point(xmid, ymid);
 
