@@ -36,6 +36,8 @@ import org.firstinspires.ftc.teamcode.robot.mechanisms.FullAutoHelper;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.FlipperController;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
+import org.firstinspires.ftc.teamcode.test.MockDcMotor;
+import org.firstinspires.ftc.teamcode.test.MockServo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
@@ -52,7 +54,8 @@ public class FullAuto extends OpMode {
     // Count of processed blocks
     private int blockCount = 0;
 
-
+    // TODO: change testing to false
+    private boolean testing = true;
 
     // The robot states
     private enum RobotStates
@@ -81,7 +84,7 @@ public class FullAuto extends OpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
         OpenCvCamera openCvCamera;
-        boolean usePhoneCamera = false;
+        boolean usePhoneCamera = testing;
         if (usePhoneCamera) {
             openCvCamera = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         }
@@ -94,31 +97,57 @@ public class FullAuto extends OpMode {
 
         // Create all controllers
 
-        drivetrainController = new DrivetrainController(
-                hardwareMap.get(DcMotor.class, "left_front"),
-                hardwareMap.get(DcMotor.class, "right_front"),
-                hardwareMap.get(DcMotor.class, "left_back"),
-                hardwareMap.get(DcMotor.class, "right_back"),
+        if (testing) {
+                drivetrainController = new DrivetrainController(
+                        new MockDcMotor("left_front", telemetry),
+                        new MockDcMotor("right_front", telemetry),
+                        new MockDcMotor("left_back", telemetry),
+                        new MockDcMotor("right_back", telemetry),
                 telemetry);
 
-        fullAutoHelper = new FullAutoHelper(
-                new FlipperController(
-                        hardwareMap.get(Servo.class, "flipper1"),
-                        hardwareMap.get(Servo.class, "flipper2"),
-                        telemetry),
-                new ArmController(
-                        hardwareMap.get(Servo.class, "armbase"),
-                        hardwareMap.get(Servo.class, "armjoint"),
-                        telemetry),
-                new IntakeController(
-                        hardwareMap.get(DcMotor.class, "intake_left"),
-                        hardwareMap.get(DcMotor.class, "intake_right"),
-                        telemetry),
-                new LiftController(
-                        hardwareMap.get(DcMotor.class, "lift"),
-                        telemetry),
-                telemetry);
+            fullAutoHelper = new FullAutoHelper(
+                    new FlipperController(
+                            new MockServo("flipper1", telemetry),
+                            new MockServo("flipper2", telemetry),
+                            telemetry),
+                    new ArmController(
+                            new MockServo("armbase", telemetry),
+                            new MockServo("armjoint", telemetry),
+                            telemetry),
+                    new IntakeController(
+                            new MockDcMotor("intake_left", telemetry),
+                            new MockDcMotor("intake_right", telemetry),
+                            telemetry),
+                    new LiftController(
+                            new MockDcMotor("lift", telemetry),
+                            telemetry),
+                    telemetry);
+        }
+        else {
+            drivetrainController = new DrivetrainController(
+                    hardwareMap.get(DcMotor.class, "left_front"),
+                    hardwareMap.get(DcMotor.class, "right_front"),
+                    hardwareMap.get(DcMotor.class, "left_back"),
+                    hardwareMap.get(DcMotor.class, "right_back"),
+                    telemetry);
 
+            fullAutoHelper = new FullAutoHelper(
+                    new FlipperController(
+                            hardwareMap.get(Servo.class, "flipper1"),
+                            hardwareMap.get(Servo.class, "flipper2"),
+                            telemetry),
+                    new ArmController(
+                            hardwareMap.get(Servo.class, "armbase"),
+                            hardwareMap.get(Servo.class, "armjoint"),
+                            telemetry),
+                    new IntakeController(
+                            hardwareMap.get(DcMotor.class, "intake_left"),
+                            hardwareMap.get(DcMotor.class, "intake_right"),
+                            telemetry),
+                    new LiftController(
+                            hardwareMap.get(DcMotor.class, "lift"),
+                            telemetry),
+                    telemetry);
 
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -129,10 +158,12 @@ public class FullAuto extends OpMode {
 
             imu.initialize(parameters);
 
+        }
+
+
         fullAutoHelper.run();
     }
 
-    @Override
     public void loop() {
 
         switch (robotState) {
@@ -183,7 +214,7 @@ public class FullAuto extends OpMode {
                 if (fullAutoHelper.GetRunningState() == FullAutoHelper.RunningStates.Ready) {
                     // Processed a block
                     blockCount++;
-                    telemetry.addData("Robot: ", "DroppedBlock ", blockCount);
+                    telemetry.addData("Robot: ", "DroppedBlock %d", blockCount);
                     telemetry.update();
 
                     // TODO: go again?
@@ -226,6 +257,8 @@ public class FullAuto extends OpMode {
     private void ProcessCameraState() {
         switch (cameraController.State) {
             case Undetermined: {
+                telemetry.addData("Camera: ", "Object Undetermined");
+                telemetry.update();
                 break;
             }
 
@@ -250,7 +283,7 @@ public class FullAuto extends OpMode {
 
                 GrabBlock();
                 break;
-            }
+                    }
         }
     }
 

@@ -73,6 +73,7 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
         SetRunningState(RunningStates.Loading);
+        //TODO move DT at same time
         run();
     }
 
@@ -131,7 +132,7 @@ public class FullAutoHelper extends Thread {
             Thread.sleep(millisec);
         }
         catch(InterruptedException e) {
-            telemetry.addData("FullAutoHelper: ", "Wait interrupted", e.getMessage());
+            telemetry.addData("FullAutoHelper: ", "Wait interrupted: %s", e.getMessage());
         }
     }
 }
