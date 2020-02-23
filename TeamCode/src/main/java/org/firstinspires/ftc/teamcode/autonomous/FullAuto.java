@@ -163,7 +163,7 @@ public class FullAuto extends OpMode {
             imu.initialize(parameters);
         }
 
-        fullAutoHelper.run();
+        //fullAutoHelper.run();
 
          Wait(1000); //gives camera to initialize properly
     }
