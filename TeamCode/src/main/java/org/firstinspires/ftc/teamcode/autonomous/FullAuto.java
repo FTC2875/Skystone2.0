@@ -98,30 +98,31 @@ public class FullAuto extends OpMode {
         // Create all controllers
 
         if (testing) {
-                drivetrainController = new DrivetrainController(
-                        new MockDcMotor("left_front", telemetry),
-                        new MockDcMotor("right_front", telemetry),
-                        new MockDcMotor("left_back", telemetry),
-                        new MockDcMotor("right_back", telemetry),
-                telemetry);
+            drivetrainController = new DrivetrainController(
+                    new MockDcMotor("left_front", telemetry),
+                    new MockDcMotor("right_front", telemetry),
+                    new MockDcMotor("left_back", telemetry),
+                    new MockDcMotor("right_back", telemetry),
+            telemetry);
 
             fullAutoHelper = new FullAutoHelper(
-                    new FlipperController(
-                            new MockServo("flipper1", telemetry),
-                            new MockServo("flipper2", telemetry),
-                            telemetry),
-                    new ArmController(
-                            new MockServo("armbase", telemetry),
-                            new MockServo("armjoint", telemetry),
-                            telemetry),
-                    new IntakeController(
-                            new MockDcMotor("intake_left", telemetry),
-                            new MockDcMotor("intake_right", telemetry),
-                            telemetry),
-                    new LiftController(
-                            new MockDcMotor("lift", telemetry),
-                            telemetry),
-                    telemetry);
+                drivetrainController,
+                new FlipperController(
+                        new MockServo("flipper1", telemetry),
+                        new MockServo("flipper2", telemetry),
+                        telemetry),
+                new ArmController(
+                        new MockServo("armbase", telemetry),
+                        new MockServo("armjoint", telemetry),
+                        telemetry),
+                new IntakeController(
+                        new MockDcMotor("intake_left", telemetry),
+                        new MockDcMotor("intake_right", telemetry),
+                        telemetry),
+                new LiftController(
+                        new MockDcMotor("lift", telemetry),
+                        telemetry),
+                telemetry);
         }
         else {
             drivetrainController = new DrivetrainController(
@@ -132,6 +133,7 @@ public class FullAuto extends OpMode {
                     telemetry);
 
             fullAutoHelper = new FullAutoHelper(
+                    drivetrainController,
                     new FlipperController(
                             hardwareMap.get(Servo.class, "flipper1"),
                             hardwareMap.get(Servo.class, "flipper2"),
@@ -157,9 +159,7 @@ public class FullAuto extends OpMode {
             parameters.loggingEnabled      = false;
 
             imu.initialize(parameters);
-
         }
-
 
         fullAutoHelper.run();
     }

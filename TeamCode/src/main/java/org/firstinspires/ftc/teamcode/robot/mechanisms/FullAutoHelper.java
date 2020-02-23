@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot.mechanisms;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
 
 /**
  * Usage: Combines controllers for lifting and dropping blocks.
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * Author: Daniel
  */
 public class FullAutoHelper extends Thread {
+    private DrivetrainController drivetrainController;
     private FlipperController flipperController;
     private ArmController armController;
     private IntakeController intakeController;
@@ -28,11 +30,13 @@ public class FullAutoHelper extends Thread {
     private RunningStates runningState = RunningStates.Ready;
 
     public FullAutoHelper(
+            DrivetrainController drivetrainController,
             FlipperController flipperController,
             ArmController armController,
             IntakeController intakeController,
             LiftController liftController,
             Telemetry telemetry) {
+        this.drivetrainController = drivetrainController;
         this.flipperController = flipperController;
         this.armController = armController;
         this.intakeController = intakeController;
@@ -48,6 +52,7 @@ public class FullAutoHelper extends Thread {
 
     private void SetRunningState(RunningStates state) {
         synchronized (lock1) {
+            telemetry.addData("FullAutoHelper: ", "SetRunningState: %s", state.name());
             runningState = state;
         }
     }
@@ -73,7 +78,6 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
         SetRunningState(RunningStates.Loading);
-        //TODO move DT at same time
         run();
     }
 
@@ -82,7 +86,13 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
 
+        telemetry.addData("FullAutoHelper: ", "Loading started");
+
         // TODO: fix the load sequence
+
+        //TODO move DT at same time
+        drivetrainController.BeginApproach(100);
+
         intakeController.BeginIntake(-1, 1);
         Wait(2000);
 
@@ -98,6 +108,7 @@ public class FullAutoHelper extends Thread {
         // liftController.BeginMovingLift(12, 0.1, LiftController.Direction.Down);
         // flipperController.BeginFlip();
 
+        telemetry.addData("FullAutoHelper: ", "Loading finished");
         SetRunningState(RunningStates.Ready);
         run();
     }
@@ -110,7 +121,8 @@ public class FullAutoHelper extends Thread {
         // Assumes ready starting position
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
-        SetRunningState(RunningStates.Unloading);
+
+        telemetry.addData("FullAutoHelper: ", "Unloading started");
 
         // TODO: fix the unload sequence
 
@@ -122,6 +134,7 @@ public class FullAutoHelper extends Thread {
 
         // flipperController.BeginFlip();
 
+        telemetry.addData("FullAutoHelper: ", "Unloading finished");
         // TODO: reset to starting position
 
         SetRunningState(RunningStates.Ready);
