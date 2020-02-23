@@ -17,7 +17,6 @@ public class FullAutoHelper extends Thread {
     private IntakeController intakeController;
     private LiftController liftController;
     private Telemetry telemetry;
-    private Thread thread1;
     private final Object lock1 = new Object();
 
     // The robot states
@@ -59,23 +58,13 @@ public class FullAutoHelper extends Thread {
     }
 
     public void Start() {
-        if (thread1 == null) {
-            thread1 = new Thread("FullAutoHelper");
-            thread1.start();
-        }
+        this.start();
+        this.setName("FullAutoHelper");
     }
 
     public void Stop() {
-        if (thread1 != null) {
-            thread1.interrupt();
-
-            try {
-                thread1.join();
-            } catch (InterruptedException e) {
-                telemetry.addData("fullAutoHelper: ", "thread exited");
-            }
-
-            thread1 = null;
+        if (this.isAlive()) {
+            this.interrupt();
         }
     }
 
