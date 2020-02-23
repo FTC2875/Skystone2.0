@@ -68,7 +68,7 @@ public class DrivetrainController {
     }
 
     public void BeginScan(int targetPosition){
-        telemetry.addData("drivetrain:", "BeginScan");
+        telemetry.addData("drivetrain:", "BeginScan, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
@@ -91,7 +91,7 @@ public class DrivetrainController {
     }
 
     public void BeginApproach(int targetPosition){
-        telemetry.addData("drivetrain:", "BeginApproach");
+        telemetry.addData("drivetrain:", "BeginApproach, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
@@ -114,7 +114,7 @@ public class DrivetrainController {
     }
 
     public void BeginUnload(int targetPosition){
-        telemetry.addData("drivetrain:", "BeginUnload");
+        telemetry.addData("drivetrain:", "BeginUnload, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
@@ -136,7 +136,7 @@ public class DrivetrainController {
         back_right.setPower(-0.2);
     }
     public void BeginTurnRight(int targetPosition) {
-        telemetry.addData("drivetrain:", "BeginTurnRight");
+        telemetry.addData("drivetrain:", "BeginTurnRight, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
@@ -159,7 +159,7 @@ public class DrivetrainController {
     }
 
     public void BeginTurnLeft(int targetPosition) {
-        telemetry.addData("drivetrain:", "BeginTurnLeft");
+        telemetry.addData("drivetrain:", "BeginTurnLeft, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
@@ -190,7 +190,7 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        telemetry.addData("drivetrain:", "setpower: %d, %d, %d, %d", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        telemetry.addData("drivetrain:", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         //TODO format all telemetry with %d
         front_left.setPower(frontLeftPower);
         front_right.setPower(frontRightPower);

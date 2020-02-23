@@ -132,7 +132,7 @@ public class FullAutoHelper extends Thread {
             Thread.sleep(millisec);
         }
         catch(InterruptedException e) {
-            telemetry.addData("FullAutoHelper: ", "Wait interrupted", e.getMessage());
+            telemetry.addData("FullAutoHelper: ", "Wait interrupted: %s", e.getMessage());
         }
     }
 }

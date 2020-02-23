@@ -54,7 +54,8 @@ public class FullAuto extends OpMode {
     // Count of processed blocks
     private int blockCount = 0;
 
-
+    // TODO: change testing to false
+    private boolean testing = true;
 
     // The robot states
     private enum RobotStates
@@ -75,9 +76,6 @@ public class FullAuto extends OpMode {
 
     @Override
     public void init() {
-
-        // TODO: change testing to false
-        boolean testing = true;
 
         blockCount = 0;
         robotState = RobotStates.Initialization;
@@ -216,7 +214,7 @@ public class FullAuto extends OpMode {
                 if (fullAutoHelper.GetRunningState() == FullAutoHelper.RunningStates.Ready) {
                     // Processed a block
                     blockCount++;
-                    telemetry.addData("Robot: ", "DroppedBlock ", blockCount);
+                    telemetry.addData("Robot: ", "DroppedBlock %d", blockCount);
                     telemetry.update();
 
                     // TODO: go again?

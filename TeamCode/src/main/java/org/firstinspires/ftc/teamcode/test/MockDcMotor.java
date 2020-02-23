@@ -11,6 +11,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
     private String name;
     private Telemetry telemetry;
     private int position = 0;
+    private int currentPosition = 0;
+    private double power = 0.0;
+    private Direction direction = Direction.FORWARD;
 
     public MockDcMotor(String name, Telemetry telemetry) {
         this.name = name;
@@ -49,7 +52,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
     @Override
     public void setPowerFloat() {
-
     }
 
     @Override
@@ -61,6 +63,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
     public void setTargetPosition(int position) {
         telemetry.addData(name, "setTargetPosition: %d", position);
         this.position = position;
+        this.currentPosition = position;
     }
 
     @Override
@@ -75,12 +78,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
     @Override
     public int getCurrentPosition() {
-        return 0;
+        return currentPosition;
     }
 
     @Override
     public void setMode(RunMode mode) {
-
+        telemetry.addData(name, "setMode: %d", mode);
     }
 
     @Override
@@ -90,22 +93,26 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
     @Override
     public void setDirection(Direction direction) {
+        telemetry.addData(name, "setDirection, %s",
+                direction == Direction.FORWARD ? "FORWARD": "BACKWARD");
 
+        this.direction = direction;
     }
 
     @Override
     public Direction getDirection() {
-        return null;
+        return direction;
     }
 
     @Override
     public void setPower(double power) {
-
+        telemetry.addData(name, "setTargetPosition: %f", power);
+        this.power = power;
     }
 
     @Override
     public double getPower() {
-        return 0;
+        return power;
     }
 
     @Override

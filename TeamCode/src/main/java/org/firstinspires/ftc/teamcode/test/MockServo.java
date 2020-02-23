@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.test;
 
-
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
@@ -9,6 +8,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class MockServo implements Servo {
     private String name;
     private Telemetry telemetry;
+    private double position = 0.0;
+    private Direction direction = Direction.FORWARD;
+    private double minScaleRange = 0.0;
+    private double maxScaleRange = 0.0;
 
     public MockServo(String name, Telemetry telemetry) {
         this.name = name;
@@ -27,27 +30,35 @@ public class MockServo implements Servo {
 
     @Override
     public void setDirection(Direction direction) {
+        telemetry.addData(name, "setDirection, %s",
+                direction == Direction.FORWARD ? "FORWARD": "BACKWARD");
 
+        this.direction = direction;
     }
 
     @Override
     public Direction getDirection() {
-        return null;
+        return direction;
     }
 
     @Override
     public void setPosition(double position) {
+        telemetry.addData(name, "setPosition, %f", position);
 
+        this.position = position;
     }
 
     @Override
     public double getPosition() {
-        return 0;
+        return position;
     }
 
     @Override
     public void scaleRange(double min, double max) {
+        telemetry.addData(name, "scaleRange, %f, %f", min, max);
 
+        minScaleRange = min;
+        maxScaleRange = max;
     }
 
     @Override
@@ -57,7 +68,7 @@ public class MockServo implements Servo {
 
     @Override
     public String getDeviceName() {
-        return null;
+        return name;
     }
 
     @Override
