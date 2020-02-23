@@ -43,24 +43,40 @@ public class TestMotors extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_back"),
                 telemetry);
 
-        liftController = new LiftController(
-                hardwareMap.get(DcMotor.class, "lift"),
-                telemetry);
+    //    liftController = new LiftController(
+    //            hardwareMap.get(DcMotor.class, "lift"),
+    //            telemetry);
 
     }
     @Override
     public void loop() {
-        if (gamepad1.dpad_up) drivetrainController.SetPower(1, 0, 0, 0);
-        else if (gamepad1.dpad_right) drivetrainController.SetPower(0, 1, 0, 0);
-        else if (gamepad1.dpad_down) drivetrainController.SetPower(0, 0, 1, 0);
-        else if (gamepad1.dpad_left) drivetrainController.SetPower(0, 0, 0, 1);
-        else drivetrainController.SetPower(0,0,0,0);
+        if (gamepad1.dpad_up){
+
+            drivetrainController.SetPower(1, 0, 0, 0);
+            telemetry.addLine("frontleft on");
+        }
+        else if (gamepad1.dpad_right) {
+            drivetrainController.SetPower(0, 1, 0, 0);
+            telemetry.addLine("frontright on");
+        }
+        else if (gamepad1.dpad_down) {
+            drivetrainController.SetPower(0, 0, 1, 0);
+            telemetry.addLine("backleft on");
+        }
+        else if (gamepad1.dpad_left) {
+            drivetrainController.SetPower(0, 0, 0, 1);
+            telemetry.addLine("backright on");
+        }
+        else {
+            drivetrainController.SetPower(0, 0, 0, 0);
+            telemetry.addLine("all off");
+        }
 
         telemetry.addData("fl:", drivetrainController.FLPos());
         telemetry.addData("bl:", drivetrainController.BLPos());
         telemetry.addData("fr:", drivetrainController.FRPos());
         telemetry.addData("br:", drivetrainController.BRPos());
-        telemetry.addData("lift: ", liftController.getCurrentPosition());
+        //telemetry.addData("lift: ", liftController.getCurrentPosition());
         telemetry.update();
     }
 
