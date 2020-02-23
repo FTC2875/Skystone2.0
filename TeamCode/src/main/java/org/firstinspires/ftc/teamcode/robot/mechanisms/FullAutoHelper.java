@@ -132,6 +132,7 @@ public class FullAutoHelper extends Thread {
         // flipperController.BeginFlip();
         // liftController.BeginMovingLift(12, 0.2, LiftController.Direction.Up);
 
+
         // flipperController.BeginFlip();
 
         telemetry.addData("FullAutoHelper: ", "Unloading finished");

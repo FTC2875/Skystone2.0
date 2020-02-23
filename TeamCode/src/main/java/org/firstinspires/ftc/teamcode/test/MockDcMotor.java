@@ -83,7 +83,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
     @Override
     public void setMode(RunMode mode) {
-        telemetry.addData(name, "setMode: %d", mode);
+        telemetry.addData(name, "setMode: %s", mode);
     }
 
     @Override
