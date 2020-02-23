@@ -94,7 +94,6 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
         SetRunningState(RunningStates.Loading);
-        run();
     }
 
     private void Load() {
@@ -126,7 +125,6 @@ public class FullAutoHelper extends Thread {
 
         telemetry.addData("FullAutoHelper: ", "Loading finished");
         SetRunningState(RunningStates.Ready);
-        run();
     }
 
     public void BeginUnload() {
