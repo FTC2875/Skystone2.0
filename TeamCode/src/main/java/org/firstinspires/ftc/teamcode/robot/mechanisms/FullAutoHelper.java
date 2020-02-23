@@ -58,7 +58,8 @@ public class FullAutoHelper extends Thread {
     }
 
     public void run() {
-        while (isAlive()) {
+       // while (isAlive()) {
+        while(true) {
             switch (runningState) {
                 case Loading:
                     Load();
