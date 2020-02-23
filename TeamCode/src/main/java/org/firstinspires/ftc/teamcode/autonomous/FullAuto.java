@@ -328,7 +328,7 @@ public class FullAuto extends OpMode {
         if (robotState == RobotStates.MoveToBlock) {
             telemetry.addData("Robot: ", "Error: already MovingToBlock");
             return;
-        } //TODO: Align with the block by moving left and right and processing camerastate
+        } //TODO: Align with the block by moving left and right and processing camerastate, add PID control with center.x value to get to 240
 
 
 
