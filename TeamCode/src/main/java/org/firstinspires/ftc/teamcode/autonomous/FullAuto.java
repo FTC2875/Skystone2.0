@@ -161,7 +161,7 @@ public class FullAuto extends OpMode {
             imu.initialize(parameters);
         }
 
-        fullAutoHelper.run();
+        fullAutoHelper.Start();
     }
 
     public void loop() {
