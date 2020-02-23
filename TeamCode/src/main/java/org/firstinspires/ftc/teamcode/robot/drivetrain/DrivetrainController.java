@@ -78,7 +78,6 @@ public class DrivetrainController {
         frontRightPosition = targetPosition;
         backLeftPosition = targetPosition;
         backRightPosition = -targetPosition;
-
         front_left.setTargetPosition(targetPosition);
         back_left.setTargetPosition(targetPosition);
         front_right.setTargetPosition(targetPosition);
@@ -190,7 +189,7 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        telemetry.addData("drivetrain:", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        telemetry.addData("drivetrain:", "setpower: %d, %d, %d, %d", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         //TODO format all telemetry with %d
         front_left.setPower(frontLeftPower);
         front_right.setPower(frontRightPower);

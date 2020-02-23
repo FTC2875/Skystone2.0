@@ -35,7 +35,7 @@ public class LiftController {
     }
 
     public void BeginMovingLift(int position, double power) {
-        telemetry.addData("LiftController:", "BeginMovingLift: $f, %f", position, power);
+        telemetry.addData("LiftController:", "BeginMovingLift: %d, %f", position, power);
         lift.setTargetPosition(position);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(power);
