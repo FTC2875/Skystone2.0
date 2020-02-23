@@ -65,9 +65,27 @@ public class FullAutoHelper extends Thread {
         }
     }
 
+    public void Stop() {
+        if (thread1 != null) {
+            thread1.interrupt();
+
+            try {
+                thread1.join();
+            } catch (InterruptedException e) {
+                telemetry.addData("fullAutoHelper: ", "thread exited");
+            }
+
+            thread1 = null;
+        }
+    }
+
     public void run() {
-       // while (isAlive()) {
-        while(true) {
+        if (!isAlive()) {
+            telemetry.addData("FullAutoHelper: ", "thread is not alive");
+            return;
+        }
+
+        while (isAlive()) {
             switch (runningState) {
                 case Loading:
                     Load();

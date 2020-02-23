@@ -165,7 +165,7 @@ public class FullAuto extends OpMode {
 
         fullAutoHelper.Start();
 
-        Wait(1000); //gives camera to initialize properly
+        Wait(1000); // gives camera some time to initialize properly
     }
 
     public void loop() {
@@ -244,15 +244,7 @@ public class FullAuto extends OpMode {
     public void stop() {
         robotState = RobotStates.Done;
 
-        // Terminate the background thread
-        fullAutoHelper.interrupt();
-
-        try {
-            fullAutoHelper.join();
-        }
-        catch(InterruptedException e) {
-            telemetry.addData("fullAutoHelper: ", "thread exited");
-        }
+        fullAutoHelper.Stop();
     }
 
     private void ProcessCameraState() {
