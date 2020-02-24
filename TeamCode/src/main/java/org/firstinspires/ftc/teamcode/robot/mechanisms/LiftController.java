@@ -35,7 +35,7 @@ public class LiftController {
     }
 
     public void BeginMovingLift(int position, double power) {
-        telemetry.addData("LiftController:", "BeginMovingLift: %d, %f", position, power);
+        telemetry.addData("LiftController", "BeginMovingLift: %d, %f", position, power);
         lift.setTargetPosition(position);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setPower(power);
@@ -52,12 +52,12 @@ public class LiftController {
     public void Stop() { lift.setPower(0); }
 
     public void setTargetPosition(int position) {
-        telemetry.addData("LiftController:", "setTargetPosition: %d", position);
+        telemetry.addData("LiftController", "setTargetPosition: %d", position);
         lift.setTargetPosition(position);
     }
 
     public void setPower(double power) {
-        telemetry.addData("LiftController:", "setPower: %f", power);
+        telemetry.addData("LiftController", "setPower: %f", power);
         lift.setPower(power);
     }
 

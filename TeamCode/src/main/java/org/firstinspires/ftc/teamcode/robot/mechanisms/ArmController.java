@@ -25,18 +25,18 @@ public class ArmController {
     }
 
     public void SetPosition(double armBasePosition, double armJointPosition) {
-        //telemetry.addData("ArmController:", "SetPosition: ", armBasePosition, armJointPosition);
+        telemetry.addData("ArmController", "SetPosition: %d, %d", armBasePosition, armJointPosition);
         armbase.setPosition(armBasePosition);
         armjoint.setPosition(armJointPosition);
     }
 
     public void SetBasePosition(double armBasePosition){
-        //telemetry.addData("ArmController:", "SetBasePosition", armBasePosition);
+        telemetry.addData("ArmController", "SetBasePosition: %d", armBasePosition);
         armbase.setPosition(armBasePosition);
     }
 
     public void SetJointPosition(double armJointPosition){
-        //telemetry.addData("ArmController:", "SetJointPosition", armJointPosition);
+        //telemetry.addData("ArmController", "SetJointPosition", armJointPosition);
         armjoint.setPosition(armJointPosition);
     }
 
@@ -48,16 +48,16 @@ public class ArmController {
     public void BeginGrip() {
         // TODO implement grip
         // armbase
-        telemetry.addData("ArmController:", "BeginGrip");
+        telemetry.addData("ArmController", "BeginGrip");
     }
 
     public void BeginRelease() {
         // TODO implement release
-        telemetry.addData("ArmController:", "BeginRelease");
+        telemetry.addData("ArmController", "BeginRelease");
     }
 
     public void BeginRaise() {
         // TODO implement raise
-        telemetry.addData("ArmController:", "BeginRaise");
+        telemetry.addData("ArmController", "BeginRaise");
     }
 }

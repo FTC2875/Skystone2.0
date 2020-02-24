@@ -189,7 +189,7 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        telemetry.addData("drivetrain:", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        telemetry.addData("drivetrain", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
         //TODO format all telemetry with %d
         front_left.setPower(frontLeftPower);
         front_right.setPower(frontRightPower);
@@ -205,7 +205,7 @@ public class DrivetrainController {
     }
 
     public void resetEncoders() {
-        telemetry.addData("drivetrain:", "reset encoders");
+        telemetry.addData("drivetrain", "reset encoders");
 
         // try without encoders
 /*        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

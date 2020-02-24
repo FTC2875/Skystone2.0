@@ -28,13 +28,13 @@ public class IntakeController {
     }
 
     public void SetPosition(int leftIntakePosition, int rightIntakePosition) {
-        telemetry.addData("IntakeController:", "SetPosition: %d, %d", leftIntakePosition, rightIntakePosition);
+        telemetry.addData("IntakeController", "SetPosition: %d, %d", leftIntakePosition, rightIntakePosition);
         intake_left.setTargetPosition(leftIntakePosition);
         intake_right.setTargetPosition(rightIntakePosition);
     }
 
     public void BeginIntake(double leftIntakePower, double rightIntakePower) {
-        telemetry.addData("IntakeController:", "BeginIntake: %f, %f", leftIntakePower, rightIntakePower);
+        telemetry.addData("IntakeController", "BeginIntake: %f, %f", leftIntakePower, rightIntakePower);
         intake_left.setPower(leftIntakePower);
         intake_right.setPower(rightIntakePower);
     }

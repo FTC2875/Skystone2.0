@@ -54,14 +54,14 @@ public class FullAutoHelper extends Thread {
 
     private void SetRunningState(RunningStates state) {
         synchronized (lock1) {
-            telemetry.addData("FullAutoHelper: ", "SetRunningState: %s", state.name());
+            telemetry.addData("FullAutoHelper", "SetRunningState: %s", state.name());
             runningState = state;
         }
     }
 
     public void Start() {
         if (!this.isAlive()) {
-            telemetry.addData("FullAutoHelper: ", "start thread");
+            telemetry.addData("FullAutoHelper", "start thread");
             this.start();
             this.setName("FullAutoHelper");
         }
@@ -69,14 +69,14 @@ public class FullAutoHelper extends Thread {
 
     public void Stop() {
         if (this.isAlive()) {
-            telemetry.addData("FullAutoHelper: ", "stop thread");
+            telemetry.addData("FullAutoHelper", "stop thread");
             this.interrupt();
         }
     }
 
     public void run() {
         if (!isAlive()) {
-            telemetry.addData("FullAutoHelper: ", "thread is not alive");
+            telemetry.addData("FullAutoHelper", "thread is not alive");
             return;
         }
 
@@ -107,7 +107,7 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
 
-        telemetry.addData("FullAutoHelper: ", "Loading started");
+        telemetry.addData("FullAutoHelper", "Loading started");
         SetRunningState(RunningStates.Loading);
 
         // TODO: fix the load sequence
@@ -130,7 +130,7 @@ public class FullAutoHelper extends Thread {
         // liftController.BeginMovingLift(12, 0.1, LiftController.Direction.Down);
         // flipperController.BeginFlip();
 
-        telemetry.addData("FullAutoHelper: ", "Loading finished");
+        telemetry.addData("FullAutoHelper", "Loading finished");
         SetRunningState(RunningStates.Ready);
     }
 
@@ -143,7 +143,7 @@ public class FullAutoHelper extends Thread {
         // This method block until all operations are executed.
         // Must wait after each operation before starting the next, unless both can run together
 
-        telemetry.addData("FullAutoHelper: ", "Unloading started");
+        telemetry.addData("FullAutoHelper", "Unloading started");
         SetRunningState(RunningStates.Unloading);
 
         // TODO: fix the unload sequence
@@ -157,7 +157,7 @@ public class FullAutoHelper extends Thread {
 
         // flipperController.BeginFlip();
 
-        telemetry.addData("FullAutoHelper: ", "Unloading finished");
+        telemetry.addData("FullAutoHelper", "Unloading finished");
         // TODO: reset to starting position
 
         SetRunningState(RunningStates.Ready);
@@ -168,7 +168,7 @@ public class FullAutoHelper extends Thread {
             Thread.sleep(millisec);
         }
         catch(InterruptedException e) {
-            telemetry.addData("FullAutoHelper: ", "Wait interrupted: %s", e.getMessage());
+            telemetry.addData("FullAutoHelper", "Wait interrupted: %s", e.getMessage());
         }
     }
 }

@@ -5,6 +5,14 @@ import com.qualcomm.robotcore.hardware.ServoController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * Usage: Mocks Servo.
+ *
+ *
+ *
+ * Author: Daniel
+ */
+
 public class MockServo implements Servo {
     private String name;
     private Telemetry telemetry;

@@ -6,8 +6,14 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-    public class MockDcMotor implements DcMotor {
-
+/**
+ * Usage: Mocks DcMotor.
+ *
+ *
+ *
+ * Author: Daniel
+ */
+public class MockDcMotor implements DcMotor {
     private String name;
     private Telemetry telemetry;
     private int position = 0;

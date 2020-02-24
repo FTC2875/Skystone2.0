@@ -242,7 +242,7 @@ public class FullAuto extends OpMode {
                 if (fullAutoHelper.GetRunningState() == FullAutoHelper.RunningStates.Ready) {
                     // Processed a block
                     blockCount++;
-                    telemetry.addData("Robot: ", "DroppedBlock %d", blockCount);
+                    telemetry.addData("Robot", "DroppedBlock %d", blockCount);
 
                     // TODO: go again?
                     fullAutoHelper.Wait(5000);
@@ -258,7 +258,7 @@ public class FullAuto extends OpMode {
 
             case Done: {
                 // TODO: no more blocks, what now?
-                telemetry.addData("Robot: ", "Done");
+                telemetry.addData("Robot", "Done");
                 break;
             }
 
@@ -278,25 +278,23 @@ public class FullAuto extends OpMode {
     private void ProcessCameraState() {
         switch (cameraController.State) {
             case Undetermined: {
-                telemetry.addData("Camera: ", "Object Undetermined");
+                telemetry.addData("Camera", "Object Undetermined");
                 break;
             }
 
             case ObjectFound: {
-                telemetry.addLine("Camera: ObjectFound at ");
-                telemetry.addData("x: ", cameraController.center.x);
-                telemetry.addData("y: ", cameraController.center.y);
+                telemetry.addData("Camera","ObjectFound at %f, %f", cameraController.center.x, cameraController.center.y);
                 ApproachBlock();
                 break;
             }
 
             case ObjectLost: {
-                telemetry.addData("Camera: ", "ObjectLost");
+                telemetry.addData("Camera", "ObjectLost");
 
                 // Stop driving to load the block
                 if (drivetrainController.IsMoving()) {
 
-                    telemetry.addData("Robot: ", "Stop");
+                    telemetry.addData("Robot", "Stop");
                     drivetrainController.Stop();
                 }
 
@@ -309,13 +307,13 @@ public class FullAuto extends OpMode {
     private void LookForBlock() {
         if (robotState == RobotStates.LookingForBlock) {
 
-            telemetry.addData("Robot: ", "Error: already LookingForBlock");
+            telemetry.addData("Robot", "Error: already LookingForBlock");
             return;
         }
 
         robotState = RobotStates.LookingForBlock;
 
-        telemetry.addData("Robot: ", "LookingForBlock");
+        telemetry.addData("Robot", "LookingForBlock");
 
         if (drivetrainController.IsMoving()) {
             drivetrainController.Stop();
@@ -326,7 +324,7 @@ public class FullAuto extends OpMode {
 
     private void AlignWithBlock(){
         if (robotState == RobotStates.MoveToBlock) {
-            telemetry.addData("Robot: ", "Error: already MovingToBlock");
+            telemetry.addData("Robot", "Error: already MovingToBlock");
             return;
         } //TODO: Align with the block by moving left and right and processing camerastate, add PID control with center.x value to get to 240
 
@@ -337,13 +335,13 @@ public class FullAuto extends OpMode {
     private void ApproachBlock() {
         if (robotState == RobotStates.ApproachingBlock) {
 
-            telemetry.addData("Robot: ", "Error: already ApproachingBlock");
+            telemetry.addData("Robot", "Error: already ApproachingBlock");
             return;
         }
 
         robotState = RobotStates.ApproachingBlock;
 
-        telemetry.addData("Robot: ", "ApproachingBlock");
+        telemetry.addData("Robot", "ApproachingBlock");
 
         // Drive to load the block
         if (drivetrainController.IsMoving()) {
@@ -363,7 +361,7 @@ public class FullAuto extends OpMode {
 
         robotState = RobotStates.WaitingToGrabBlock;
 
-        telemetry.addData("Robot: ", "WaitingToGrabBlock");
+        telemetry.addData("Robot", "WaitingToGrabBlock");
 
         fullAutoHelper.BeginLoad();
     }
@@ -371,13 +369,13 @@ public class FullAuto extends OpMode {
     private void UnloadBlock() {
         if (robotState == RobotStates.GoingToUnloadBlock) {
 
-            telemetry.addData("Robot: ", "Error: already GoingToUnloadBlock");
+            telemetry.addData("Robot", "Error: already GoingToUnloadBlock");
             return;
         }
 
         robotState = RobotStates.GoingToUnloadBlock;
 
-        telemetry.addData("Robot: ", "GoingToUnloadBlock");
+        telemetry.addData("Robot", "GoingToUnloadBlock");
 
         // Drive to load the block
         if (drivetrainController.IsMoving()) {
@@ -391,7 +389,7 @@ public class FullAuto extends OpMode {
 
     private void DropBlock() {
         if (robotState == RobotStates.WaitingToDropBlock && !drivetrainController.IsMoving()) {
-            telemetry.addData("Robot: ", "WaitingToDropBlock");
+            telemetry.addData("Robot", "WaitingToDropBlock");
 
             fullAutoHelper.BeginUnload();
 
@@ -404,7 +402,7 @@ public class FullAuto extends OpMode {
             Thread.sleep(millisec);
         }
         catch(InterruptedException e) {
-            telemetry.addData("FullAutoHelper: ", "Wait interrupted: %s", e.getMessage());
+            telemetry.addData("FullAutoHelper", "Wait interrupted: %s", e.getMessage());
         }
     }
     private void playdroid(){

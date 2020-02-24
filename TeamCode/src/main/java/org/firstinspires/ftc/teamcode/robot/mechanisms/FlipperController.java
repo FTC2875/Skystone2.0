@@ -26,13 +26,13 @@ public class FlipperController {
     }
 
     public void SetPosition(double flipper1Position, double flipper2Position) {
-        telemetry.addData("FlipperController:", "SetPosition: %f, %f", flipper1Position, flipper2Position);
+        telemetry.addData("FlipperController", "SetPosition: %f, %f", flipper1Position, flipper2Position);
         flipper1.setPosition(flipper1Position);
         flipper2.setPosition(flipper2Position);
     }
 
     public void BeginFlip() {
-        telemetry.addData("FlipperController:", "BeginFlip: %b", flipped);
+        telemetry.addData("FlipperController", "BeginFlip: %b", flipped);
         if (flipped) {
             flipper1.setPosition(0.8);
             flipper2.setPosition(0.8);
