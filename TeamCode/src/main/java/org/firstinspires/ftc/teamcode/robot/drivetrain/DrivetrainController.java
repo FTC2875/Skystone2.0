@@ -180,7 +180,78 @@ public class DrivetrainController {
         back_right.setPower(-0.2);
     }
 
-    public boolean IsMoving() {
+    public void MoveToFoundation(int targetPosition) {
+        telemetry.addData("drivetrain:", "MoveToFoundation, targetPosition: %d", targetPosition);
+        Stop();
+
+        resetEncoders();
+        setPositionMode();
+
+        frontLeftPosition = targetPosition;
+        frontRightPosition = targetPosition;
+        backLeftPosition = targetPosition;
+        backRightPosition = -targetPosition;
+
+        front_left.setTargetPosition(targetPosition);
+        back_left.setTargetPosition(targetPosition);
+        front_right.setTargetPosition(targetPosition);
+        back_right.setTargetPosition(-targetPosition);
+
+        front_left.setPower(-0.5);
+        front_right.setPower(-0.5);
+        back_left.setPower(-0.5);
+        back_right.setPower(-0.5);
+
+    }
+
+    public void ApproachFoundation(int targetPosition) {
+        telemetry.addData("drivetrain:", "MoveToFoundation, targetPosition: %d", targetPosition);
+        Stop();
+
+        resetEncoders();
+        setPositionMode();
+
+        frontLeftPosition = targetPosition;
+        frontRightPosition = targetPosition;
+        backLeftPosition = targetPosition;
+        backRightPosition = -targetPosition;
+
+        front_left.setTargetPosition(targetPosition);
+        back_left.setTargetPosition(targetPosition);
+        front_right.setTargetPosition(targetPosition);
+        back_right.setTargetPosition(-targetPosition);
+
+        front_left.setPower(0.2);
+        front_right.setPower(0.2);
+        back_left.setPower(0.2);
+        back_right.setPower(0.2);
+
+    }
+
+    public void MoveToBlocks(int targetPosition) {
+        telemetry.addData("drivetrain:", "MoveToFoundation, targetPosition: %d", targetPosition);
+        Stop();
+
+        resetEncoders();
+        setPositionMode();
+
+        frontLeftPosition = targetPosition;
+        frontRightPosition = targetPosition;
+        backLeftPosition = targetPosition;
+        backRightPosition = -targetPosition;
+
+        front_left.setTargetPosition(targetPosition);
+        back_left.setTargetPosition(targetPosition);
+        front_right.setTargetPosition(targetPosition);
+        back_right.setTargetPosition(-targetPosition);
+
+        front_left.setPower(0.5);
+        front_right.setPower(0.5);
+        back_left.setPower(0.5);
+        back_right.setPower(0.5);
+
+    }
+        public boolean IsMoving() {
         return front_left.isBusy() || front_right.isBusy() || back_left.isBusy() || back_right.isBusy()
                 || front_left.getCurrentPosition() != frontLeftPosition
                 || front_right.getCurrentPosition() != frontRightPosition

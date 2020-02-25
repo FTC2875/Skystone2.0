@@ -56,9 +56,12 @@ public class FullAuto extends OpMode {
     private double ticks = 767.2; //# encoder ticks per revolution
     private double wheelC = 100 * 0.0393701 * Math.PI; //100mm wheel diameter to circumference in inches
     private double distanceToBlock = 30; //inches to skystone accounting for robot width
+    private double tileWidth = 23.622; //600mm in inches
 
     private int ticksToDetect = (int)(ticks * ((distanceToBlock - 15) / wheelC)); //~1860, 15 inches for CV to safely detect
     private int ticksToBlock = (int)((ticks * (distanceToBlock / wheelC)) - ticksToDetect); //remaining ticks to stones
+    private int ticksToOtherSide = (int)(ticks*((tileWidth * 4)/wheelC)); //approx 4 tiles to other side
+    private int skystoneOffset;
 
     // Count of processed blocks
     private int blockCount = 0;
@@ -223,7 +226,7 @@ public class FullAuto extends OpMode {
             }
 
             case DrivingToFoundation: {
-                // TODO: move to foundation side
+                GoToFoundation();
                 break;
             }
 
@@ -267,6 +270,7 @@ public class FullAuto extends OpMode {
                 break;
         }
     }
+
 
     @Override
     public void stop() {
@@ -364,6 +368,12 @@ public class FullAuto extends OpMode {
         telemetry.addData("Robot", "WaitingToGrabBlock");
 
         fullAutoHelper.BeginLoad();
+    }
+    private void GoToFoundation() {
+        //TODO: account for skystone position offset when moving to other side (4 inch block)
+        drivetrainController.MoveToFoundation(ticksToOtherSide);
+        drivetrainController.ApproachFoundation();
+        // TODO: move to foundation side
     }
 
     private void UnloadBlock() {
