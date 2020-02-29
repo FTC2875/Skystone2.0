@@ -67,12 +67,22 @@ public class DrivetrainController {
         resetEncoders();
     }
 
+    public void CrawlForward() {
+        telemetry.addData("drivetrain:", "crawling forward");
+        front_left.setPower(0.1);
+        front_right.setPower(0.1);
+        back_left.setPower(0.1);
+        back_right.setPower(0.1);
+    }
+
     public void BeginScan(int targetPosition){
         telemetry.addData("drivetrain:", "BeginScan, targetPosition: %d", targetPosition);
         Stop();
 
         resetEncoders();
         setPositionMode();
+
+        //TODO: check encoder values on new drivetrain, is br still negative?
 
         frontLeftPosition = targetPosition;
         frontRightPosition = targetPosition;
@@ -133,6 +143,32 @@ public class DrivetrainController {
         front_right.setPower(0.2);
         back_left.setPower(0.2);
         back_right.setPower(-0.2);
+    }
+
+    public void ScanRight(double powerLevel) {
+        telemetry.addData("drivetrain:", "ScanLeft at Power: %f", powerLevel);
+        Stop();
+
+        resetEncoders();
+        setPositionMode();
+
+        front_left.setPower(-powerLevel); //this moves left
+        front_right.setPower(powerLevel);
+        back_left.setPower(-powerLevel);
+        back_right.setPower(powerLevel);
+    }
+
+    public void ScanLeft(double powerLevel) {
+        telemetry.addData("drivetrain:", "ScanRight at Power: %f", powerLevel);
+        Stop();
+
+        resetEncoders();
+        setPositionMode();
+
+        front_left.setPower(powerLevel); //this moves left
+        front_right.setPower(-powerLevel);
+        back_left.setPower(powerLevel);
+        back_right.setPower(-powerLevel);
     }
     public void BeginTurnRight(int targetPosition) {
         telemetry.addData("drivetrain:", "BeginTurnRight, targetPosition: %d", targetPosition);
@@ -228,7 +264,7 @@ public class DrivetrainController {
 
     }
 
-    public void MoveToBlocks(int targetPosition) {
+    public void MoveBackToBlocks(int targetPosition) {
         telemetry.addData("drivetrain:", "MoveToFoundation, targetPosition: %d", targetPosition);
         Stop();
 

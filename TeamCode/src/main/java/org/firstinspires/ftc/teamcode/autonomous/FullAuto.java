@@ -54,13 +54,14 @@ public class FullAuto extends OpMode {
     private FullAutoHelper fullAutoHelper;
 
     private double ticks = 767.2; //# encoder ticks per revolution
-    private double wheelC = 100 * 0.0393701 * Math.PI; //100mm wheel diameter to circumference in inches
+    private double wheelC = 100 / 25.4 * Math.PI; //100mm wheel diameter to circumference in inches
     private double distanceToBlock = 30; //inches to skystone accounting for robot width
     private double tileWidth = 23.622; //600mm in inches
 
-    private int ticksToDetect = (int)(ticks * ((distanceToBlock - 15) / wheelC)); //~1860, 15 inches for CV to safely detect
+    private int ticksToDetect = (int)(ticks * ((distanceToBlock - 18) / wheelC)); //~1860, 12-18 inches for CV to safely detect
     private int ticksToBlock = (int)((ticks * (distanceToBlock / wheelC)) - ticksToDetect); //remaining ticks to stones
     private int ticksToOtherSide = (int)(ticks*((tileWidth * 4)/wheelC)); //approx 4 tiles to other side
+    private int ticksToFoundation = (int)(ticksToBlock);
     private int skystoneOffset;
 
     // Count of processed blocks
@@ -188,8 +189,7 @@ public class FullAuto extends OpMode {
 
         switch (robotState) {
             case Initialization: {
-                // TODO: do any additional initialization
-                // liftController.BeginMovingLift(12, LiftController.Direction.Down);
+                // TODO: any additional initialization
                 playdroid();
                 LookForBlock();
                 break;
@@ -197,16 +197,11 @@ public class FullAuto extends OpMode {
 
             case LookingForBlock: {
                 ProcessCameraState();
-                //if CameraController.States.valueOf() {
-
-               // }
-                // TODO: if the robot did not find block before it it reached the end of platform, set robotState to Done
                 break;
             }
 
             case MoveToBlock: {
                 AlignWithBlock();
-                //TODO: move left and right for alignment with the block, compare center.x to mid point of viewframe
             }
 
             case ApproachingBlock: {
@@ -272,6 +267,7 @@ public class FullAuto extends OpMode {
     }
 
 
+
     @Override
     public void stop() {
         robotState = RobotStates.Done;
@@ -283,12 +279,15 @@ public class FullAuto extends OpMode {
         switch (cameraController.State) {
             case Undetermined: {
                 telemetry.addData("Camera", "Object Undetermined");
+                drivetrainController.CrawlForward();
+                //TODO: crawl backward if we're too close to find it?
                 break;
             }
 
             case ObjectFound: {
                 telemetry.addData("Camera","ObjectFound at %f, %f", cameraController.center.x, cameraController.center.y);
-                ApproachBlock();
+                drivetrainController.Stop();
+                robotState = RobotStates.MoveToBlock;
                 break;
             }
 
@@ -304,7 +303,7 @@ public class FullAuto extends OpMode {
 
                 GrabBlock();
                 break;
-                    }
+            }
         }
     }
 
@@ -330,11 +329,20 @@ public class FullAuto extends OpMode {
         if (robotState == RobotStates.MoveToBlock) {
             telemetry.addData("Robot", "Error: already MovingToBlock");
             return;
-        } //TODO: Align with the block by moving left and right and processing camerastate, add PID control with center.x value to get to 240
-
-
-
+        } //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value to get to 240
+        //TODO: remove while statement?
+        if (cameraController.center.x > 240) {
+            drivetrainController.ScanRight(0.1);
+        }
+        if (cameraController.center.x < 240) {
+            drivetrainController.ScanLeft(0.1);
+        }
+        else {
+            drivetrainController.Stop();
+            ApproachBlock();
+        }
     }
+
 
     private void ApproachBlock() {
         if (robotState == RobotStates.ApproachingBlock) {
@@ -371,8 +379,9 @@ public class FullAuto extends OpMode {
     }
     private void GoToFoundation() {
         //TODO: account for skystone position offset when moving to other side (4 inch block)
-        drivetrainController.MoveToFoundation(ticksToOtherSide);
-        drivetrainController.ApproachFoundation();
+        drivetrainController.BeginScan(-ticksToBlock); //move away from blocks
+        drivetrainController.MoveToFoundation(ticksToOtherSide); //Go to other side
+        drivetrainController.ApproachFoundation(ticksToFoundation); //move towards foundation
         // TODO: move to foundation side
     }
 
