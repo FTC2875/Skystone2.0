@@ -13,7 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 public class LiftController {
-    private DcMotor lift;
+    private DcMotor lift1;
+    private DcMotor lift2;
     private int liftstage = 0;
     private Telemetry telemetry;
 
@@ -22,57 +23,57 @@ public class LiftController {
         Down
     }
 
-    public LiftController(DcMotor lift, Telemetry telemetry) {
-        this.lift = lift;
+    public LiftController(DcMotor lift1, DcMotor lift2, Telemetry telemetry) {
+        this.lift1 = lift1;
+        this.lift2 = lift2;
         this.telemetry = telemetry;
 
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //if motor.setPower(0), set these motors to brake
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        double liftposition = lift.getCurrentPosition();
+        lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //TODO: Encoder values?
+        //TODO: get power coefficient so lift stays at constant height
+        double lift1position = lift1.getCurrentPosition();
     }
 
     public void BeginMovingLift(int position, double power) {
         telemetry.addData("LiftController", "BeginMovingLift: %d, %f", position, power);
-        lift.setTargetPosition(position);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        lift.setPower(power);
-/*
-        while(lift.isBusy())
+        lift1.setTargetPosition(position);
+        lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift1.setPower(power);
+        while(lift1.isBusy())
         {
             // do nothing
         }
 
         Stop();
-*/
+
     }
 
-    public void Stop() { lift.setPower(0); }
+    public void Stop() { lift1.setPower(0); }
 
     public void setTargetPosition(int position) {
         telemetry.addData("LiftController", "setTargetPosition: %d", position);
-        lift.setTargetPosition(position);
+        lift1.setTargetPosition(position);
     }
 
     public void setPower(double power) {
         telemetry.addData("LiftController", "setPower: %f", power);
-        lift.setPower(power);
+        lift1.setPower(power);
     }
 
     public double getCurrentPosition() {
-        return lift.getCurrentPosition();
+        return lift1.getCurrentPosition();
     }
 
-    public void ZeroBrake() {lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
-    public void ZeroCoast() {lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
+    public void ZeroBrake() {lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
+    public void ZeroCoast() {lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
 
     public boolean IsMoving() {
-        return lift.isBusy();
+        return lift1.isBusy();
     }
 
-    public DcMotor GetDcMotor() {
-        return lift;
-    }
+    public DcMotor getLift1() { return lift1; }
 }
