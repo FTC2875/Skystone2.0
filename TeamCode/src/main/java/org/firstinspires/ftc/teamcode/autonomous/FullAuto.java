@@ -68,7 +68,7 @@ public class FullAuto extends OpMode {
     private int blockCount = 0;
 
     // TODO: change testing to false
-    private boolean testing = true;
+    private boolean testing = false;
 
     // The robot states
     private enum RobotStates
