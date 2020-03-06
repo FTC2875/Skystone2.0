@@ -14,40 +14,40 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmController {
 
-    private Servo armbase;
-    private Servo armjoint; //upper near rotation point
+    private Servo gripper;
+    private Servo linkage; //upper near rotation point
     private Telemetry telemetry;
 
-    public ArmController(Servo armbase, Servo armjoint, Telemetry telemetry) {
-        this.armbase = armbase;
-        this.armjoint = armjoint;
+    public ArmController(Servo gripper, Servo linkage, Telemetry telemetry) {
+        this.gripper = gripper;
+        this.linkage = linkage;
         this.telemetry = telemetry;
     }
 
     public void SetPosition(double armBasePosition, double armJointPosition) {
         telemetry.addData("ArmController", "SetPosition: %d, %d", armBasePosition, armJointPosition);
-        armbase.setPosition(armBasePosition);
-        armjoint.setPosition(armJointPosition);
+        gripper.setPosition(armBasePosition);
+        linkage.setPosition(armJointPosition);
     }
 
     public void SetBasePosition(double armBasePosition){
         telemetry.addData("ArmController", "SetBasePosition: %d", armBasePosition);
-        armbase.setPosition(armBasePosition);
+        gripper.setPosition(armBasePosition);
     }
 
     public void SetJointPosition(double armJointPosition){
         //telemetry.addData("ArmController", "SetJointPosition", armJointPosition);
-        armjoint.setPosition(armJointPosition);
+        linkage.setPosition(armJointPosition);
     }
 
     public double getArmJointPosition() {
-        return armjoint.getPosition();
+        return linkage.getPosition();
     }
-    public double getArmBasePosition() { return armbase.getPosition(); }
+    public double getArmBasePosition() { return gripper.getPosition(); }
 
     public void BeginGrip() {
         // TODO implement grip
-        // armbase
+        // gripper
         telemetry.addData("ArmController", "BeginGrip");
     }
 

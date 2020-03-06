@@ -14,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class LiftController {
     private DcMotor lift1;
-    private DcMotor lift2;
     private int liftstage = 0;
     private Telemetry telemetry;
 
@@ -23,9 +22,8 @@ public class LiftController {
         Down
     }
 
-    public LiftController(DcMotor lift1, DcMotor lift2, Telemetry telemetry) {
+    public LiftController(DcMotor lift1, Telemetry telemetry) {
         this.lift1 = lift1;
-        this.lift2 = lift2;
         this.telemetry = telemetry;
 
         lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -75,5 +73,7 @@ public class LiftController {
         return lift1.isBusy();
     }
 
-    public DcMotor getLift1() { return lift1; }
+    public DcMotor GetDcMotor() {
+        return lift1;
+    }
 }

@@ -75,8 +75,8 @@ public class MecanumDrive extends OpMode {
                backRight =  hardwareMap.get(DcMotor.class, "right_back");
 
         intakeController = new IntakeController(
-                hardwareMap.get(DcMotor.class, "intake_left"),
-                hardwareMap.get(DcMotor.class, "intake_right"),
+                hardwareMap.get(DcMotor.class, "intake1"),
+                hardwareMap.get(DcMotor.class, "intake2"),
                 telemetry);
 
         lift = new LiftController(
@@ -84,14 +84,14 @@ public class MecanumDrive extends OpMode {
                 telemetry);
 
         armController = new ArmController(
-                hardwareMap.get(Servo.class, "armbase"),
-                hardwareMap.get(Servo.class, "armjoint"),
+                hardwareMap.get(Servo.class, "gripper"),
+                hardwareMap.get(Servo.class, "linkage"),
                 telemetry);
 
         flipperController = new FlipperController(
-                hardwareMap.get(Servo.class, "flipper1"),
-                hardwareMap.get(Servo.class, "flipper2"),
+                hardwareMap.get(Servo.class, "flipper"),
                 telemetry);
+
 
         //IMU = new IMUController(hardwareMap.get(BNO055IMU.class, "imu";)
 
