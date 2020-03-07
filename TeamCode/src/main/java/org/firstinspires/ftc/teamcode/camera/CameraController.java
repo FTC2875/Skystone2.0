@@ -50,6 +50,8 @@ public class CameraController extends OpenCvPipeline {
 
     }
 
+    public double TemplateScore = templateScore;
+
 
     public Mat processFrame(Mat input) {
 

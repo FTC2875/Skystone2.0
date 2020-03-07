@@ -95,14 +95,14 @@ public class MecanumDrive extends OpMode {
 
         //IMU = new IMUController(hardwareMap.get(BNO055IMU.class, "imu";)
 
-        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
-        expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 6");
+        expansionHub2 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         expansionHub.setPhoneChargeEnabled(true);
-        armController.SetBasePosition(0);
+        armController.SetGripperPosition(0.25);
 
         liftinit = lift.getCurrentPosition();
-        armController.SetJointPosition(0);
+        armController.SetLinkagePosition(0.7);
 
         playdroid();
     }
@@ -181,11 +181,11 @@ public class MecanumDrive extends OpMode {
         /// FLIPPER CONTROL ///
         if(gamepad2.y) flipped = true;
         if (flipped) {
-            flipperController.SetPosition(0.8, 0.8);
+            flipperController.SetPosition(0.8);
         }
         if (gamepad2.x) flipped = false;
         if (!flipped){
-            flipperController.SetPosition(0, 0);
+            flipperController.SetPosition(0);
         }
 
 
@@ -206,10 +206,12 @@ public class MecanumDrive extends OpMode {
 
         /// ARM CONTROL ///
         //armjointPosition = 0;
-        if (gamepad2.dpad_left && armController.getArmJointPosition() < 0.9) armController.SetJointPosition(armController.getArmJointPosition()+0.025);
-        if (gamepad2.dpad_right) armController.SetJointPosition(0);
-        if (gamepad2.a) armController.SetBasePosition(1);
-        if (gamepad2.b) armController.SetBasePosition(0);
+        //TODO LINKAGE FUNCTION
+        if (gamepad2.a) armController.SetGripperPosition(1);
+        if (gamepad2.b) armController.SetGripperPosition(0.25);
+
+        if (gamepad2.dpad_right) armController.SetLinkagePosition(0.17);
+        if (gamepad2.dpad_left) armController.SetLinkagePosition(0.7);
 
 
         /// LIFT CONTROL ///
@@ -217,9 +219,9 @@ public class MecanumDrive extends OpMode {
         //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
         //if (gamepad2.dpad_down && liftwstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
         //if (liftposition >= -1200) {double liftinit = lift.getCurrentPosition();
-            if (gamepad2.dpad_up) lift.setPower(-0.25);
-            if (gamepad2.dpad_down) lift.setPower(0.1);
-                                                        //TODO LIFT STATE MACHINE FOR MAX HEIGHT
+            if (gamepad2.dpad_up) lift.setPower(-0.35);
+            if (gamepad2.dpad_down) lift.setPower(0.15);
+            //TODO LIFT STATE MACHINE FOR MAX HEIGHT
             if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper) lift.setPower(-0.0009); //resist Fg pushing down on lift
         //}
         //else lift.setPower(0.05);
@@ -235,6 +237,8 @@ public class MecanumDrive extends OpMode {
         telemetry.addData("Drive Power: ", powerFactor);
         telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
         telemetry.addData("Total Current Draw:", Math.round(currentdrawAMPS * 100d) / 100d + "A");
+        telemetry.addData("Gripper Position: ", armController.getGripperPosition());
+        telemetry.addData("Linkage Position: ", armController.getLinkagePosition());
         telemetry.update();
     }
 
@@ -246,6 +250,8 @@ public class MecanumDrive extends OpMode {
 //            case(3): {lift.BeginMovingLift(600, 0.15); }
 //        }
 //    }
+
+
 
 
     /// SOUNDS ///

@@ -24,26 +24,25 @@ public class ArmController {
         this.telemetry = telemetry;
     }
 
-    public void SetPosition(double armBasePosition, double armJointPosition) {
-        telemetry.addData("ArmController", "SetPosition: %d, %d", armBasePosition, armJointPosition);
-        gripper.setPosition(armBasePosition);
-        linkage.setPosition(armJointPosition);
+    public void SetPosition(double gripperPosition, double linkagePosition) {
+        telemetry.addData("ArmController", "SetPosition: %f, %f", gripperPosition, linkagePosition);
+        gripper.setPosition(gripperPosition);
+        linkage.setPosition(linkagePosition);
     }
 
-    public void SetBasePosition(double armBasePosition){
-        telemetry.addData("ArmController", "SetBasePosition: %d", armBasePosition);
-        gripper.setPosition(armBasePosition);
+    public void SetGripperPosition(double gripperposition){
+        telemetry.addData("ArmController", "SetGripperPosition: %f", gripperposition);
+        gripper.setPosition(gripperposition);
     }
 
-    public void SetJointPosition(double armJointPosition){
-        //telemetry.addData("ArmController", "SetJointPosition", armJointPosition);
-        linkage.setPosition(armJointPosition);
+    public void SetLinkagePosition(double linkageposition){
+        telemetry.addData("ArmController", "SetLinkagePosition: %f", linkageposition);
+        linkage.setPosition(linkageposition);
     }
 
-    public double getArmJointPosition() {
-        return linkage.getPosition();
+    public double getGripperPosition() { return gripper.getPosition();
     }
-    public double getArmBasePosition() { return gripper.getPosition(); }
+    public double getLinkagePosition() { return linkage.getPosition(); }
 
     public void BeginGrip() {
         // TODO implement grip

@@ -23,8 +23,8 @@ public class FlipperController {
         this.telemetry = telemetry;
     }
 
-    public void SetPosition(double flipper1Position, double flipper2Position) {
-        telemetry.addData("FlipperController", "SetPosition: %f, %f", flipper1Position, flipper2Position);
+    public void SetPosition(double flipper1Position) {
+        telemetry.addData("FlipperController", "SetPosition: %f", flipper1Position);
         flipper1.setPosition(flipper1Position);
     }
 

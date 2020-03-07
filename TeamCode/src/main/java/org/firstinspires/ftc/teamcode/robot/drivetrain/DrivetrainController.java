@@ -37,7 +37,7 @@ public class DrivetrainController {
 
         this.telemetry = telemetry;
 
-        front_left.setDirection(DcMotor.Direction.REVERSE);
+        front_left.setDirection(DcMotor.Direction.FORWARD);
         front_right.setDirection(DcMotor.Direction.FORWARD);
         back_left.setDirection(DcMotor.Direction.REVERSE);
         back_right.setDirection(DcMotor.Direction.FORWARD);
@@ -297,7 +297,6 @@ public class DrivetrainController {
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
         telemetry.addData("drivetrain", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        //TODO format all telemetry with %d
         front_left.setPower(frontLeftPower);
         front_right.setPower(frontRightPower);
         back_left.setPower(backLeftPower);

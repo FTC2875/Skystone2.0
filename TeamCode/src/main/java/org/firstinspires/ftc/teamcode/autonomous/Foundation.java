@@ -26,8 +26,7 @@ public class Foundation extends OpMode {
         backRight =  hardwareMap.get(DcMotor.class, "right_back");
 
         flipperController = new FlipperController(
-                hardwareMap.get(Servo.class, "flipper1"),
-                hardwareMap.get(Servo.class, "flipper2"), telemetry);
+                hardwareMap.get(Servo.class, "flipper"), telemetry);
     }
     @Override
     public void loop(){
@@ -41,7 +40,7 @@ public class Foundation extends OpMode {
         backRight.setPower(-0.2);
 
 
-            flipperController.SetPosition(0.8, 0.8);
+            flipperController.SetPosition(0.8);
         }
     }
 //}

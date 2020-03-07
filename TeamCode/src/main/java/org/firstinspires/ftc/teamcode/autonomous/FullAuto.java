@@ -68,7 +68,7 @@ public class FullAuto extends OpMode {
     private int blockCount = 0;
 
     // TODO: change testing to false
-    private boolean testing = false;
+    private boolean testing = true;
 
     // The robot states
     private enum RobotStates
@@ -127,8 +127,7 @@ public class FullAuto extends OpMode {
             fullAutoHelper = new FullAutoHelper(
                 drivetrainController,
                 new FlipperController(
-                        new MockServo("flipper1", telemetry),
-                        new MockServo("flipper2", telemetry),
+                        new MockServo("flipper", telemetry),
                         telemetry),
                 new ArmController(
                         new MockServo("armbase", telemetry),
@@ -154,8 +153,7 @@ public class FullAuto extends OpMode {
             fullAutoHelper = new FullAutoHelper(
                     drivetrainController,
                     new FlipperController(
-                            hardwareMap.get(Servo.class, "flipper1"),
-                            hardwareMap.get(Servo.class, "flipper2"),
+                            hardwareMap.get(Servo.class, "flipper"),
                             telemetry),
                     new ArmController(
                             hardwareMap.get(Servo.class, "armbase"),
@@ -170,14 +168,14 @@ public class FullAuto extends OpMode {
                             telemetry),
                     telemetry);
 
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//            parameters.mode                = BNO055IMU.SensorMode.IMU;
+//            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//            parameters.loggingEnabled      = false;
 
-            parameters.mode                = BNO055IMU.SensorMode.IMU;
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled      = false;
-
-            imu.initialize(parameters);
+//            imu.initialize(parameters);
         }
 
         fullAutoHelper.Start();
@@ -197,6 +195,7 @@ public class FullAuto extends OpMode {
 
             case LookingForBlock: {
                 ProcessCameraState();
+                telemetry.addData("Template Score: ", cameraController.TemplateScore);
                 break;
             }
 
