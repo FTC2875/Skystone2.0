@@ -325,22 +325,23 @@ public class FullAuto extends OpMode {
     }
 
     private void AlignWithBlock(){
-        if (robotState == RobotStates.MoveToBlock) {
-            telemetry.addData("Robot", "Error: already MovingToBlock");
-            return;
-        } //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value to get to 240
+
+        if (robotState == RobotStates.MoveToBlock && drivetrainController.IsMoving()) {
+            telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
+        }
+
+        //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value to get to 240
         if (cameraController.center.x > 240) {
             drivetrainController.ScanRight(0.25);
         }
-        if (cameraController.center.x < 240) {
+        else if (cameraController.center.x < 240) {
             drivetrainController.ScanLeft(0.25);
         }
-        else {
+        else if (drivetrainController.IsMoving()) {
             drivetrainController.Stop();
             ApproachBlock();
         }
     }
-
 
     private void ApproachBlock() {
         if (robotState == RobotStates.ApproachingBlock) {
