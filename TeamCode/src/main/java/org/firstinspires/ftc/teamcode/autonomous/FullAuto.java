@@ -50,6 +50,7 @@ public class FullAuto extends OpMode {
 
     private CameraController cameraController;
 
+    private int lastCameraPanningPos = 0;
     private DrivetrainController drivetrainController;
     private FullAutoHelper fullAutoHelper;
 
@@ -326,19 +327,22 @@ public class FullAuto extends OpMode {
 
     private void AlignWithBlock(){
 
-        if (robotState == RobotStates.MoveToBlock && drivetrainController.IsMoving()) {
+        if (robotState == RobotStates.MoveToBlock) {
             telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
         }
 
-        //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value to get to 240
-        if (cameraController.center.x > 240) {
+        //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
+        // to get to somewhere in betwee 200 to 300
+        if (cameraController.center.x > 300 && lastCameraPanningPos == 0) {
+            lastCameraPanningPos = (int)cameraController.center.x;
             drivetrainController.ScanRight(0.25);
         }
-        else if (cameraController.center.x < 240) {
+        else if (cameraController.center.x < 200 && lastCameraPanningPos == 0) {
+            lastCameraPanningPos = (int)cameraController.center.x;
             drivetrainController.ScanLeft(0.25);
         }
-        else if (drivetrainController.IsMoving()) {
-            drivetrainController.Stop();
+        else {
+            lastCameraPanningPos = 0;
             ApproachBlock();
         }
     }

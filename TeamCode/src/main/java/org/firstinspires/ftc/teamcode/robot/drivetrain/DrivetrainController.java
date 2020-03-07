@@ -146,7 +146,7 @@ public class DrivetrainController {
     }
 
     public void ScanRight(double powerLevel) {
-        telemetry.addData("drivetrain:", "ScanLeft at Power: %f", powerLevel);
+        telemetry.addData("drivetrain:", "ScanRight at Power: %f", powerLevel);
         Stop();
 
         resetEncoders();
@@ -159,7 +159,7 @@ public class DrivetrainController {
     }
 
     public void ScanLeft(double powerLevel) {
-        telemetry.addData("drivetrain:", "ScanRight at Power: %f", powerLevel);
+        telemetry.addData("drivetrain:", "ScanLeft at Power: %f", powerLevel);
         Stop();
 
         resetEncoders();
@@ -170,6 +170,7 @@ public class DrivetrainController {
         back_left.setPower(powerLevel);
         back_right.setPower(-powerLevel);
     }
+
     public void BeginTurnRight(int targetPosition) {
         telemetry.addData("drivetrain:", "BeginTurnRight, targetPosition: %d", targetPosition);
         Stop();
