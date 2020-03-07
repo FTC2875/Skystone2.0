@@ -75,7 +75,7 @@ public class FullAuto extends OpMode {
         Initialization,
         LookingForBlock,
         MoveToBlock,
-        PanLeftToBlock,
+        PanLertToBlock,
         PanRightToBlock,
         ApproachingBlock,
         WaitingToGrabBlock,
@@ -201,7 +201,7 @@ public class FullAuto extends OpMode {
             }
 
             case MoveToBlock:
-            case PanLeftToBlock:
+            case PanLertToBlock:
             case PanRightToBlock: {
                 AlignWithBlock();
                 break;
@@ -289,10 +289,8 @@ public class FullAuto extends OpMode {
 
             case ObjectFound: {
                 telemetry.addData("Camera","ObjectFound at %f, %f", cameraController.center.x, cameraController.center.y);
-                if (robotState == RobotStates.LookingForBlock) {
-                    drivetrainController.Stop();
-                    robotState = RobotStates.MoveToBlock;
-                }
+                drivetrainController.Stop();
+                robotState = RobotStates.MoveToBlock;
                 break;
             }
 
@@ -331,6 +329,13 @@ public class FullAuto extends OpMode {
     }
 
     private void AlignWithBlock(){
+
+        if (robotState == RobotStates.MoveToBlock) {
+
+            telemetry.addData("Robot", "Error: already MoveToBlock");
+            return;
+        }
+
         telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
 
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
@@ -339,8 +344,8 @@ public class FullAuto extends OpMode {
             robotState = RobotStates.PanRightToBlock;
             drivetrainController.BeginScanRight(0.25);
         }
-        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLeftToBlock) {
-            robotState = RobotStates.PanLeftToBlock;
+        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLertToBlock) {
+            robotState = RobotStates.PanLertToBlock;
             drivetrainController.BeginScanLeft(0.25);
         }
         else {
