@@ -49,8 +49,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class FullAuto extends OpMode {
 
     private CameraController cameraController;
-
-    private int lastCameraPanningPos = 0;
     private DrivetrainController drivetrainController;
     private FullAutoHelper fullAutoHelper;
 
@@ -77,6 +75,8 @@ public class FullAuto extends OpMode {
         Initialization,
         LookingForBlock,
         MoveToBlock,
+        PanLertToBlock,
+        PanRightToBlock,
         ApproachingBlock,
         WaitingToGrabBlock,
         DrivingToFoundation,
@@ -200,8 +200,11 @@ public class FullAuto extends OpMode {
                 break;
             }
 
-            case MoveToBlock: {
+            case MoveToBlock:
+            case PanLertToBlock:
+            case PanRightToBlock: {
                 AlignWithBlock();
+                break;
             }
 
             case ApproachingBlock: {
@@ -328,21 +331,24 @@ public class FullAuto extends OpMode {
     private void AlignWithBlock(){
 
         if (robotState == RobotStates.MoveToBlock) {
-            telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
+
+            telemetry.addData("Robot", "Error: already MoveToBlock");
+            return;
         }
 
+        telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
+
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
-        // to get to somewhere in between 200 to 300
-        if (cameraController.center.x > 300 && lastCameraPanningPos == 0) {
-            lastCameraPanningPos = (int)cameraController.center.x;
+        // to get to somewhere in between 200 to 300.
+        if (cameraController.center.x > 300 && robotState != RobotStates.PanRightToBlock) {
+            robotState = RobotStates.PanRightToBlock;
             drivetrainController.BeginScanRight(0.25);
         }
-        else if (cameraController.center.x < 200 && lastCameraPanningPos == 0) {
-            lastCameraPanningPos = (int)cameraController.center.x;
+        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLertToBlock) {
+            robotState = RobotStates.PanLertToBlock;
             drivetrainController.BeginScanLeft(0.25);
         }
         else {
-            lastCameraPanningPos = 0;
             ApproachBlock();
         }
     }
