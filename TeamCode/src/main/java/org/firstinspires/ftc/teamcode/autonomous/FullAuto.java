@@ -332,14 +332,14 @@ public class FullAuto extends OpMode {
         }
 
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
-        // to get to somewhere in betwee 200 to 300
+        // to get to somewhere in between 200 to 300
         if (cameraController.center.x > 300 && lastCameraPanningPos == 0) {
             lastCameraPanningPos = (int)cameraController.center.x;
-            drivetrainController.ScanRight(0.25);
+            drivetrainController.BeginScanRight(0.25);
         }
         else if (cameraController.center.x < 200 && lastCameraPanningPos == 0) {
             lastCameraPanningPos = (int)cameraController.center.x;
-            drivetrainController.ScanLeft(0.25);
+            drivetrainController.BeginScanLeft(0.25);
         }
         else {
             lastCameraPanningPos = 0;
