@@ -37,7 +37,7 @@ public class DrivetrainController {
 
         this.telemetry = telemetry;
 
-        front_left.setDirection(DcMotor.Direction.FORWARD);
+        front_left.setDirection(DcMotor.Direction.REVERSE);
         front_right.setDirection(DcMotor.Direction.FORWARD);
         back_left.setDirection(DcMotor.Direction.REVERSE);
         back_right.setDirection(DcMotor.Direction.FORWARD);
@@ -69,10 +69,10 @@ public class DrivetrainController {
 
     public void CrawlForward() {
         telemetry.addData("drivetrain:", "crawling forward");
-        front_left.setPower(0.1);
-        front_right.setPower(0.1);
-        back_left.setPower(0.1);
-        back_right.setPower(0.1);
+        front_left.setPower(0.3);
+        front_right.setPower(0.3);
+        back_left.setPower(0.3);
+        back_right.setPower(0.3);
     }
 
     public void BeginScan(int targetPosition){

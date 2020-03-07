@@ -68,7 +68,7 @@ public class FullAuto extends OpMode {
     private int blockCount = 0;
 
     // TODO: change testing to false
-    private boolean testing = true;
+    private boolean testing = false;
 
     // The robot states
     private enum RobotStates
@@ -130,12 +130,12 @@ public class FullAuto extends OpMode {
                         new MockServo("flipper", telemetry),
                         telemetry),
                 new ArmController(
-                        new MockServo("armbase", telemetry),
-                        new MockServo("armjoint", telemetry),
+                        new MockServo("gripper", telemetry),
+                        new MockServo("linkage", telemetry),
                         telemetry),
                 new IntakeController(
-                        new MockDcMotor("intake_left", telemetry),
-                        new MockDcMotor("intake_right", telemetry),
+                        new MockDcMotor("intake1", telemetry),
+                        new MockDcMotor("intake2", telemetry),
                         telemetry),
                 new LiftController(
                         new MockDcMotor("lift", telemetry),
@@ -156,12 +156,12 @@ public class FullAuto extends OpMode {
                             hardwareMap.get(Servo.class, "flipper"),
                             telemetry),
                     new ArmController(
-                            hardwareMap.get(Servo.class, "armbase"),
-                            hardwareMap.get(Servo.class, "armjoint"),
+                            hardwareMap.get(Servo.class, "gripper"),
+                            hardwareMap.get(Servo.class, "linkage"),
                             telemetry),
                     new IntakeController(
-                            hardwareMap.get(DcMotor.class, "intake_left"),
-                            hardwareMap.get(DcMotor.class, "intake_right"),
+                            hardwareMap.get(DcMotor.class, "intake1"),
+                            hardwareMap.get(DcMotor.class, "intake2"),
                             telemetry),
                     new LiftController(
                             hardwareMap.get(DcMotor.class, "lift"),
@@ -329,12 +329,11 @@ public class FullAuto extends OpMode {
             telemetry.addData("Robot", "Error: already MovingToBlock");
             return;
         } //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value to get to 240
-        //TODO: remove while statement?
         if (cameraController.center.x > 240) {
-            drivetrainController.ScanRight(0.1);
+            drivetrainController.ScanRight(0.25);
         }
         if (cameraController.center.x < 240) {
-            drivetrainController.ScanLeft(0.1);
+            drivetrainController.ScanLeft(0.25);
         }
         else {
             drivetrainController.Stop();

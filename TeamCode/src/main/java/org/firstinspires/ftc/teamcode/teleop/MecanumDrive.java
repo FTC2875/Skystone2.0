@@ -181,11 +181,11 @@ public class MecanumDrive extends OpMode {
         /// FLIPPER CONTROL ///
         if(gamepad2.y) flipped = true;
         if (flipped) {
-            flipperController.SetPosition(0.8);
+            flipperController.SetPosition(0);
         }
         if (gamepad2.x) flipped = false;
         if (!flipped){
-            flipperController.SetPosition(0);
+            flipperController.SetPosition(1);
         }
 
 
