@@ -31,16 +31,16 @@ public class Foundation extends OpMode {
     @Override
     public void loop(){
         long t = System.currentTimeMillis();
-        long end = t + 900;
+        long end = t + 1350;
         while(System.currentTimeMillis() <  end)
 
-            frontLeft.setPower(-0.2);
-        frontRight.setPower(-0.2);
-        backLeft.setPower(-0.2);
-        backRight.setPower(-0.2);
+            frontLeft.setPower(-0.4);
+        frontRight.setPower(-0.4);
+        backLeft.setPower(-0.4);
+        backRight.setPower(-0.4);
 
 
-            flipperController.SetPosition(0.8);
         }
+
     }
 //}

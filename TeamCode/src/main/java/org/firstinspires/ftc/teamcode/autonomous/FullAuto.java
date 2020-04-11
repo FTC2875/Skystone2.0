@@ -282,7 +282,7 @@ public class FullAuto extends OpMode {
         switch (cameraController.State) {
             case Undetermined: {
                 telemetry.addData("Camera", "Object Undetermined");
-                drivetrainController.BeginScanRight(0.15);
+                drivetrainController.BeginScanRight(0.4);
                 //TODO: crawl backward if we're too close to find it?
                 break;
             }
@@ -335,13 +335,14 @@ public class FullAuto extends OpMode {
 
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
         // to get to somewhere in between 200 to 300.
-        if (cameraController.center.x > 300 && robotState != RobotStates.PanRightToBlock) {
+
+        if (cameraController.center.x > 300 ) { //&& robotState != RobotStates.PanRightToBlock
             robotState = RobotStates.PanRightToBlock;
-            drivetrainController.BeginScanRight(0.1);
+            drivetrainController.BeginScanRight(0.45);
         }
-        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLeftToBlock) {
+        else if (cameraController.center.x < 200) { // && robotState != RobotStates.PanLeftToBlock
             robotState = RobotStates.PanLeftToBlock;
-            drivetrainController.BeginScanLeft(0.1);
+            drivetrainController.BeginScanLeft(0.45);
         }
         else {
             ApproachBlock();

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
@@ -17,6 +18,7 @@ import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.lang.Math;
 
+import static com.qualcomm.robotcore.util.Range.clip;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
@@ -68,11 +70,12 @@ public class MecanumDrive extends OpMode {
 
     @Override
     public void init() {
-        //drivetrainController = new DrivetrainController(
-               frontLeft =  hardwareMap.get(DcMotor.class, "left_front");
-               frontRight =  hardwareMap.get(DcMotor.class, "right_front");
-               backLeft = hardwareMap.get(DcMotor.class, "left_back");
-               backRight =  hardwareMap.get(DcMotor.class, "right_back");
+        drivetrainController = new DrivetrainController(
+               frontLeft =  hardwareMap.get(DcMotor.class, "left_front"),
+               frontRight =  hardwareMap.get(DcMotor.class, "right_front"),
+               backLeft = hardwareMap.get(DcMotor.class, "left_back"),
+               backRight =  hardwareMap.get(DcMotor.class, "right_back"),
+                telemetry);
 
         intakeController = new IntakeController(
                 hardwareMap.get(DcMotor.class, "intake1"),
@@ -119,7 +122,7 @@ public class MecanumDrive extends OpMode {
         //slow mode
         if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.3; slowstate = 2;}
         if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
-        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1; slowstate = 3; }
+        if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.4; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
         double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
@@ -139,27 +142,13 @@ public class MecanumDrive extends OpMode {
         double flPower = posStrafePower + turn;
         double brPower = posStrafePower - turn;
 
-        //overflow prevention
-        if (flPower <= -1) flPower = -1;
-        if (flPower >= 1) flPower = 1;
-        if (blPower <= -1) blPower = -1;
-        if (blPower >= 1) blPower = 1;
+        //overflow prevention in controller
+        drivetrainController.SetPower(flPower, frPower, blPower, brPower);
 
-        if (frPower <= -1) frPower = -1;
-        if (frPower >= 1) frPower = 1;
-        if (brPower <= -1) brPower = -1;
-        if (brPower >= 1) brPower = 1;
-
-        //drivetrainController.SetPower(
-        //       flPower,
-        //        frPower,
-        //        blPower,
-        //        brPower;
-
-        frontLeft.setPower(flPower);
-        frontRight.setPower(frPower);
-        backLeft.setPower(blPower);
-        backRight.setPower(brPower);
+        //frontLeft.setPower(flPower);
+        //frontRight.setPower(frPower);
+        //backLeft.setPower(blPower);
+        //backRight.setPower(brPower);
 
         //RGB :D
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
@@ -211,7 +200,7 @@ public class MecanumDrive extends OpMode {
         if (gamepad2.b) armController.SetGripperPosition(0.25);
 
         if (gamepad2.dpad_right) armController.SetLinkagePosition(0.17);
-        if (gamepad2.dpad_left) armController.SetLinkagePosition(0.7);
+        if (gamepad2.dpad_left) armController.SetLinkagePosition(0.63);
 
 
         /// LIFT CONTROL ///
@@ -220,10 +209,11 @@ public class MecanumDrive extends OpMode {
         //if (gamepad2.dpad_down && liftwstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
         //if (liftposition >= -1200) {double liftinit = lift.getCurrentPosition();
             if (gamepad2.dpad_up) lift.setPower(-0.35);
-            if (gamepad2.dpad_down) lift.setPower(0.15);
+            else if (gamepad2.dpad_down && gamepad2.right_trigger < 0.05) lift.setPower(0.15);
+            else if (gamepad2.right_trigger > 0.05 && !gamepad2.dpad_down) lift.setPower(0.08);
             //TODO LIFT STATE MACHINE FOR MAX HEIGHT
-            if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper) lift.setPower(-0.0009); //resist Fg pushing down on lift
-        //}
+            if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper && gamepad2.left_trigger < 0.05) lift.setPower(-0.0009); //resist Fg pushing down on lift
+        //}.
         //else lift.setPower(0.05);
 
         if(gamepad2.left_bumper && !gamepad2.dpad_down) {

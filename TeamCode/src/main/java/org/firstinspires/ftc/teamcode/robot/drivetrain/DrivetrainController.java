@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import static com.qualcomm.robotcore.util.Range.clip;
 
 /**
  * Usage: Implements a controller for the drivetrain.
@@ -37,10 +40,10 @@ public class DrivetrainController {
 
         this.telemetry = telemetry;
 
-        front_left.setDirection(DcMotor.Direction.REVERSE);
-        front_right.setDirection(DcMotor.Direction.FORWARD);
-        back_left.setDirection(DcMotor.Direction.REVERSE);
-        back_right.setDirection(DcMotor.Direction.FORWARD);
+//        front_left.setDirection(DcMotor.Direction.REVERSE);
+//        front_right.setDirection(DcMotor.Direction.FORWARD);
+//        back_left.setDirection(DcMotor.Direction.REVERSE);
+//        back_right.setDirection(DcMotor.Direction.FORWARD);
 
         resetEncoders();
 
@@ -116,10 +119,10 @@ public class DrivetrainController {
         front_right.setTargetPosition(targetPosition);
         back_right.setTargetPosition(targetPosition);
 
-        front_left.setPower(-0.2); //move left until it sees it
-        front_right.setPower(0.2);
-        back_left.setPower(-0.2);
-        back_right.setPower(0.2);
+        front_left.setPower(-0.4); //move left until it sees it
+        front_right.setPower(0.4);
+        back_left.setPower(-0.4);
+        back_right.setPower(0.4);
     }
 
     public void BeginUnload(int targetPosition){
@@ -152,10 +155,10 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        front_left.setPower(powerLevel); //this moves left
-        front_right.setPower(powerLevel);
+        front_left.setPower(-powerLevel); //this moves right
+        front_right.setPower(-powerLevel);
         back_left.setPower(powerLevel);
-        back_right.setPower(powerLevel);
+        back_right.setPower(-powerLevel);
     }
 
     public void BeginScanLeft(double powerLevel) {
@@ -165,10 +168,10 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        front_left.setPower(-powerLevel); //this moves left
+        front_left.setPower(powerLevel); //this moves left
         front_right.setPower(-powerLevel);
-        back_left.setPower(-powerLevel);
-        back_right.setPower(-powerLevel);
+        back_left.setPower(-powerLevel); //TODO: Replace with common methods
+        back_right.setPower(powerLevel);
     }
 
     public void BeginTurnRight(int targetPosition) {
@@ -248,20 +251,7 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        frontLeftPosition = targetPosition;
-        frontRightPosition = targetPosition;
-        backLeftPosition = targetPosition;
-        backRightPosition = -targetPosition;
-
-        front_left.setTargetPosition(targetPosition);
-        back_left.setTargetPosition(targetPosition);
-        front_right.setTargetPosition(targetPosition);
-        back_right.setTargetPosition(-targetPosition);
-
-        front_left.setPower(0.2);
-        front_right.setPower(0.2);
-        back_left.setPower(0.2);
-        back_right.setPower(0.2);
+        MoveForward(targetPosition, 0.2);
 
     }
 
@@ -271,21 +261,7 @@ public class DrivetrainController {
 
         resetEncoders();
         setPositionMode();
-
-        frontLeftPosition = targetPosition;
-        frontRightPosition = targetPosition;
-        backLeftPosition = targetPosition;
-        backRightPosition = -targetPosition;
-
-        front_left.setTargetPosition(targetPosition);
-        back_left.setTargetPosition(targetPosition);
-        front_right.setTargetPosition(targetPosition);
-        back_right.setTargetPosition(-targetPosition);
-
-        front_left.setPower(0.5);
-        front_right.setPower(0.5);
-        back_left.setPower(0.5);
-        back_right.setPower(0.5);
+        MoveLeft(targetPosition, 0.2);
 
     }
         public boolean IsMoving() {
@@ -297,11 +273,16 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
+        frontLeftPower = clip(frontLeftPower, -1, 1);
+        frontRightPower = clip(frontRightPower, -1, 1);
+        backLeftPower = clip(backLeftPower, -1, 1);
+        backRightPower = clip(backRightPower, -1, 1);
+
         telemetry.addData("drivetrain", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        front_left.setPower(frontLeftPower);
-        front_right.setPower(frontRightPower);
-        back_left.setPower(backLeftPower);
-        back_right.setPower(backRightPower);
+        front_left.setPower(Range.clip(frontLeftPower, -0.50, 0.50));
+        front_right.setPower(Range.clip(frontRightPower, -0.50, 0.50));
+        back_left.setPower(Range.clip(backLeftPower, -0.50, 0.50));
+        back_right.setPower(Range.clip(backRightPower, -0.50, 0.50)); //change min/max to doubles?
     }
 
     public void setPositionMode(){
@@ -324,6 +305,54 @@ public class DrivetrainController {
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+    }
+    public void MoveLeft(int target, double power){
+        frontLeftPosition = target;
+        frontRightPosition = target;
+        backLeftPosition = target;
+        backRightPosition = -target;
+
+        front_left.setTargetPosition(target);
+        back_left.setTargetPosition(target);
+        front_right.setTargetPosition(target);
+        back_right.setTargetPosition(-target);
+
+        front_left.setPower(power); //TODO: verify that this works, check back right reversed encoder
+        front_right.setPower(power);
+        back_left.setPower(power);
+        back_right.setPower(power);
+    }
+    public void MoveRight(int target, double power){
+        frontLeftPosition = target;
+        frontRightPosition = target;
+        backLeftPosition = target;
+        backRightPosition = -target;
+
+        front_left.setTargetPosition(target);
+        back_left.setTargetPosition(target);
+        front_right.setTargetPosition(target);
+        back_right.setTargetPosition(-target);
+
+        front_left.setPower(power); //TODO: verify that this works, check back right reversed encoder
+        front_right.setPower(power);
+        back_left.setPower(power);
+        back_right.setPower(power);
+    }
+    public void MoveForward(int target, double power){
+        frontLeftPosition = -target;
+        frontRightPosition = target;
+        backLeftPosition = -target;
+        backRightPosition = target;
+
+        front_left.setTargetPosition(-target);
+        back_left.setTargetPosition(-target);
+        front_right.setTargetPosition(target);
+        back_right.setTargetPosition(target);
+
+        front_left.setPower(-power);
+        front_right.setPower(-power);
+        back_left.setPower(power);
+        back_right.setPower(power);
     }
 
     public double FLPower(){ return front_left.getPower(); }
