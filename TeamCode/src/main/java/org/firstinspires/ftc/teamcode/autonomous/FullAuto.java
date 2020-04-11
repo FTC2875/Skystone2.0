@@ -140,6 +140,7 @@ public class FullAuto extends OpMode {
                         telemetry),
                 new LiftController(
                         new MockDcMotor("lift", telemetry),
+                        new MockDcMotor("lift2", telemetry),
                         telemetry),
                 telemetry);
         }
@@ -166,6 +167,7 @@ public class FullAuto extends OpMode {
                             telemetry),
                     new LiftController(
                             hardwareMap.get(DcMotor.class, "lift"),
+                            hardwareMap.get(DcMotor.class, "lift2"),
                             telemetry),
                     telemetry);
 

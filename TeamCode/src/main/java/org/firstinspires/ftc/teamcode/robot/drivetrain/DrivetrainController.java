@@ -273,16 +273,19 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        frontLeftPower = clip(frontLeftPower, -1, 1);
-        frontRightPower = clip(frontRightPower, -1, 1);
-        backLeftPower = clip(backLeftPower, -1, 1);
-        backRightPower = clip(backRightPower, -1, 1);
+        double min = -0.98;
+        double max = 0.98;
+        frontLeftPower = clip(frontLeftPower, min, max);
+        frontRightPower = clip(frontRightPower, min, max);
+        backLeftPower = clip(backLeftPower, min, max);
+        backRightPower = clip(backRightPower, min, max);
 
         telemetry.addData("drivetrain", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        front_left.setPower(Range.clip(frontLeftPower, -0.50, 0.50));
-        front_right.setPower(Range.clip(frontRightPower, -0.50, 0.50));
-        back_left.setPower(Range.clip(backLeftPower, -0.50, 0.50));
-        back_right.setPower(Range.clip(backRightPower, -0.50, 0.50)); //change min/max to doubles?
+
+        front_left.setPower(frontLeftPower);
+        front_right.setPower(frontRightPower);
+        back_left.setPower(backLeftPower);
+        back_right.setPower(backRightPower); //change min/max to doubles?
     }
 
     public void setPositionMode(){

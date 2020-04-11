@@ -70,9 +70,9 @@ public class Range {
    * @param max maximum value allowed
    */
   public static double clip(double number, double min, double max) {
-    if (number < min) return min;
-    if (number > max) return max;
-    return number;
+    if (number <= min) return min;
+    if (number >= max) return max;
+    else return number;
   }
 
   /**

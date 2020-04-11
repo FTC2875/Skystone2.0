@@ -66,7 +66,9 @@ public class MecanumDrive extends OpMode {
     private ExpansionHubEx expansionHub2;
 
     double liftposition = 0;
+    double lift2position = 0;
     double liftinit;
+    double lift2init;
 
     @Override
     public void init() {
@@ -84,6 +86,7 @@ public class MecanumDrive extends OpMode {
 
         lift = new LiftController(
                 hardwareMap.get(DcMotor.class, "lift"),
+                hardwareMap.get(DcMotor.class, "lift2"),
                 telemetry);
 
         armController = new ArmController(
@@ -104,7 +107,8 @@ public class MecanumDrive extends OpMode {
         expansionHub.setPhoneChargeEnabled(true);
         armController.SetGripperPosition(0.25);
 
-        liftinit = lift.getCurrentPosition();
+        liftinit = lift.getLift1Pos();
+        lift2init = lift.getLift2Pos();
         //armController.SetLinkagePosition(0.7);
 
         playdroid();
@@ -117,7 +121,7 @@ public class MecanumDrive extends OpMode {
         /// DRIVETRAIN CONTROL ///
         //Strafing and rotation definition
 
-        liftposition = lift.getCurrentPosition() - liftinit;
+        liftposition = lift.getLift1Pos() - liftinit;
 
         //slow mode
         if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 0.3; slowstate = 2;}
@@ -125,9 +129,9 @@ public class MecanumDrive extends OpMode {
         if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 1.4; slowstate = 3; }
         if (!gamepad1.right_bumper && slowstate == 3){ slowstate = 0; }
 
-        double strafey  = powerFactor * gamepad1.left_stick_y; //basically forwards and backwards
-        double strafex = powerFactor * -gamepad1.left_stick_x; //lateral movement
-        double turn  = powerFactor * -gamepad1.right_stick_x; //rotation
+        double strafey  = clip(powerFactor * gamepad1.left_stick_y, -1, 1); //basically forwards and backwards
+        double strafex = clip(powerFactor * -gamepad1.left_stick_x, -1, 1); //lateral movement
+        double turn  = clip(powerFactor * -gamepad1.right_stick_x, -1, 1); //rotation
 
         double strafeAngle = Math.atan2(strafey, strafex); //angle of strafe from leftstick x and y
         double strafeMag = Math.sqrt(strafex*strafex + strafey*strafey); //magnitude of strafe (pyth. theorum)
@@ -154,7 +158,7 @@ public class MecanumDrive extends OpMode {
         expansionHub.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
         expansionHub2.setLedColor((int)(strafex*255), (int)(strafey*255), (int)(turn*255));
 
-        double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
+        //double currentdraw = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.MILLIAMPS);
         double currentdrawAMPS = expansionHub.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) + expansionHub2.getTotalModuleCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS);
 
 //        if the above doesn't work, use this
@@ -223,9 +227,9 @@ public class MecanumDrive extends OpMode {
 
 
         /// DEBUG ///
-        telemetry.addData("lift pos: ", liftposition);
+        telemetry.addData("lift pos: ", lift.getLift1Pos());
+        telemetry.addData("lift2 pos:", lift.getLift2Pos());
         telemetry.addData("Drive Power: ", powerFactor);
-        telemetry.addData("Total Current Draw:", (int)currentdraw + "mA");
         telemetry.addData("Total Current Draw:", Math.round(currentdrawAMPS * 100d) / 100d + "A");
         telemetry.addData("Gripper Position: ", armController.getGripperPosition());
         telemetry.addData("Linkage Position: ", armController.getLinkagePosition());
