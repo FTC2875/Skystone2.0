@@ -12,8 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
     private DcMotor back_left = null;
     private DcMotor back_right = null;
 
-    private DcMotor intake_left = null;
-    private DcMotor intake_right = null;
 
     @Override
     public void runOpMode() {
@@ -23,15 +21,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
         back_left = hardwareMap.get(DcMotor.class, "left_back");
         back_right = hardwareMap.get(DcMotor.class, "right_back");
 
-        intake_left = hardwareMap.get(DcMotor.class, "intake_left");
-        intake_right = hardwareMap.get(DcMotor.class, "intake_right");
-
         front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //encoder modes for motors
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         waitForStart();
@@ -41,12 +34,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             int skystonethresh = 1150; //24" to blocks is 1125ticks
             int intakethresh = 1200;
 
+            sleep(0); //TODO: configurable delay
+
             long t = System.currentTimeMillis();
             long end = t + 900;
             while(System.currentTimeMillis() <  end) {
-                front_left.setPower(-0.5);
+                front_left.setPower(-0.45);
                 front_right.setPower(0.5);
-                back_left.setPower(0.5);
+                back_left.setPower(0.45);
                 back_right.setPower(-0.5);
             }
 
@@ -55,9 +50,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             front_right.setPower(0);
             back_left.setPower(0);
             back_right.setPower(0);
-
-            intake_left.setPower(0);
-            intake_right.setPower(0);
 
             sleep(30000);
         }

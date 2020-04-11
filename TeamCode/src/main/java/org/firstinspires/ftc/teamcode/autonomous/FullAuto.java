@@ -75,7 +75,7 @@ public class FullAuto extends OpMode {
         Initialization,
         LookingForBlock,
         MoveToBlock,
-        PanLertToBlock,
+        PanLeftToBlock,
         PanRightToBlock,
         ApproachingBlock,
         WaitingToGrabBlock,
@@ -201,7 +201,7 @@ public class FullAuto extends OpMode {
             }
 
             case MoveToBlock:
-            case PanLertToBlock:
+            case PanLeftToBlock:
             case PanRightToBlock: {
                 AlignWithBlock();
                 break;
@@ -282,15 +282,17 @@ public class FullAuto extends OpMode {
         switch (cameraController.State) {
             case Undetermined: {
                 telemetry.addData("Camera", "Object Undetermined");
-                drivetrainController.CrawlForward();
+                drivetrainController.BeginScanRight(0.15);
                 //TODO: crawl backward if we're too close to find it?
                 break;
             }
 
             case ObjectFound: {
                 telemetry.addData("Camera","ObjectFound at %f, %f", cameraController.center.x, cameraController.center.y);
-                drivetrainController.Stop();
-                robotState = RobotStates.MoveToBlock;
+                if (robotState == RobotStates.LookingForBlock) {
+                    drivetrainController.Stop();
+                    robotState = RobotStates.MoveToBlock;
+                }
                 break;
             }
 
@@ -325,28 +327,21 @@ public class FullAuto extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginScan(ticksToDetect);
+        //drivetrainController.BeginScan(ticksToDetect);
     }
 
     private void AlignWithBlock(){
-
-        if (robotState == RobotStates.MoveToBlock) {
-
-            telemetry.addData("Robot", "Error: already MoveToBlock");
-            return;
-        }
-
         telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
 
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
         // to get to somewhere in between 200 to 300.
         if (cameraController.center.x > 300 && robotState != RobotStates.PanRightToBlock) {
             robotState = RobotStates.PanRightToBlock;
-            drivetrainController.BeginScanRight(0.25);
+            drivetrainController.BeginScanRight(0.1);
         }
-        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLertToBlock) {
-            robotState = RobotStates.PanLertToBlock;
-            drivetrainController.BeginScanLeft(0.25);
+        else if (cameraController.center.x < 200 && robotState != RobotStates.PanLeftToBlock) {
+            robotState = RobotStates.PanLeftToBlock;
+            drivetrainController.BeginScanLeft(0.1);
         }
         else {
             ApproachBlock();

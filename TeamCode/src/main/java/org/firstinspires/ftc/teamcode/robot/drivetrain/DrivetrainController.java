@@ -69,9 +69,9 @@ public class DrivetrainController {
 
     public void CrawlForward() {
         telemetry.addData("drivetrain:", "crawling forward");
-        front_left.setPower(0.3);
+        front_left.setPower(-0.3);
         front_right.setPower(0.3);
-        back_left.setPower(0.3);
+        back_left.setPower(-0.3);
         back_right.setPower(0.3);
     }
 
@@ -84,18 +84,18 @@ public class DrivetrainController {
 
         //TODO: check encoder values on new drivetrain, is br still negative?
 
-        frontLeftPosition = targetPosition;
+        frontLeftPosition = -targetPosition;
         frontRightPosition = targetPosition;
-        backLeftPosition = targetPosition;
-        backRightPosition = -targetPosition;
-        front_left.setTargetPosition(targetPosition);
-        back_left.setTargetPosition(targetPosition);
+        backLeftPosition = -targetPosition;
+        backRightPosition = targetPosition;
+        front_left.setTargetPosition(-targetPosition);
+        back_left.setTargetPosition(-targetPosition);
         front_right.setTargetPosition(targetPosition);
-        back_right.setTargetPosition(-targetPosition); //back right has reverse polarity
+        back_right.setTargetPosition(targetPosition); //back right has reverse polarity
 
-        front_left.setPower(0.2);
+        front_left.setPower(-0.2);
         front_right.setPower(0.2);
-        back_left.setPower(0.2);
+        back_left.setPower(-0.2);
         back_right.setPower(0.2);
     }
 
@@ -106,20 +106,20 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        frontLeftPosition = targetPosition;
+        frontLeftPosition = -targetPosition;
         frontRightPosition = targetPosition;
-        backLeftPosition = targetPosition;
-        backRightPosition = -targetPosition;
+        backLeftPosition = -targetPosition;
+        backRightPosition = targetPosition;
 
-        front_left.setTargetPosition(targetPosition);
-        back_left.setTargetPosition(targetPosition);
+        front_left.setTargetPosition(-targetPosition);
+        back_left.setTargetPosition(-targetPosition);
         front_right.setTargetPosition(targetPosition);
-        back_right.setTargetPosition(-targetPosition);
+        back_right.setTargetPosition(targetPosition);
 
-        front_left.setPower(0.2); //move left until it sees it
+        front_left.setPower(-0.2); //move left until it sees it
         front_right.setPower(0.2);
         back_left.setPower(-0.2);
-        back_right.setPower(-0.2);
+        back_right.setPower(0.2);
     }
 
     public void BeginUnload(int targetPosition){
@@ -152,9 +152,9 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        front_left.setPower(-powerLevel); //this moves left
+        front_left.setPower(powerLevel); //this moves left
         front_right.setPower(powerLevel);
-        back_left.setPower(-powerLevel);
+        back_left.setPower(powerLevel);
         back_right.setPower(powerLevel);
     }
 
@@ -165,9 +165,9 @@ public class DrivetrainController {
         resetEncoders();
         setPositionMode();
 
-        front_left.setPower(powerLevel); //this moves left
+        front_left.setPower(-powerLevel); //this moves left
         front_right.setPower(-powerLevel);
-        back_left.setPower(powerLevel);
+        back_left.setPower(-powerLevel);
         back_right.setPower(-powerLevel);
     }
 

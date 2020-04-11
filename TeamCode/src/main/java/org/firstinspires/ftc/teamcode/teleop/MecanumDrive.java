@@ -102,7 +102,7 @@ public class MecanumDrive extends OpMode {
         armController.SetGripperPosition(0.25);
 
         liftinit = lift.getCurrentPosition();
-        armController.SetLinkagePosition(0.7);
+        //armController.SetLinkagePosition(0.7);
 
         playdroid();
     }
