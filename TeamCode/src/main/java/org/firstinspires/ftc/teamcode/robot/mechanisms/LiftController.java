@@ -27,6 +27,7 @@ public class LiftController {
         this.lift1 = lift1;
         this.lift2 = lift2;
         this.telemetry = telemetry;
+        //test
 
         lift1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lift2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
