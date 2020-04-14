@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import android.media.MediaPlayer;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
@@ -16,11 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.mechanisms.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
 import org.openftc.revextensions2.ExpansionHubEx;
 
-import java.lang.Math;
-
 import static com.qualcomm.robotcore.util.Range.clip;
-import static java.lang.Math.abs;
-import static java.lang.Math.round;
 
 
 /**
@@ -87,6 +83,7 @@ public class MecanumDrive extends OpMode {
         lift = new LiftController(
                 hardwareMap.get(DcMotor.class, "lift"),
                 hardwareMap.get(DcMotor.class, "lift2"),
+                new PIDCoefficients(5,0,2),
                 telemetry);
 
         armController = new ArmController(
@@ -186,11 +183,11 @@ public class MecanumDrive extends OpMode {
         double leftIntakepower = 0;
         double rightIntakepower = 0;
         if (gamepad1.right_trigger > 0.1) {
-            leftIntakepower = -1 * gamepad1.right_trigger;
-            rightIntakepower = gamepad1.right_trigger;
+            leftIntakepower = gamepad1.right_trigger;
+            rightIntakepower = -gamepad1.right_trigger;
         }  else if (gamepad1.left_trigger > 0.1) {
-            leftIntakepower = gamepad1.left_trigger;
-            rightIntakepower = -1 * gamepad1.left_trigger;
+            leftIntakepower = -gamepad1.left_trigger;
+            rightIntakepower = gamepad1.left_trigger;
         }
 
         intakeController.BeginIntake(leftIntakepower, rightIntakepower);

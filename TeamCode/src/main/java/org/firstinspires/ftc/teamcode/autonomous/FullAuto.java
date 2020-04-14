@@ -21,25 +21,24 @@ SOFTWARE. */
 import android.media.MediaPlayer;
 import android.os.Environment;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.lang.Math.*;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.R;
-import org.firstinspires.ftc.teamcode.camera.CameraController;
+import org.firstinspires.ftc.teamcode.robot.camera.CameraController;
 import org.firstinspires.ftc.teamcode.robot.drivetrain.DrivetrainController;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.ArmController;
-import org.firstinspires.ftc.teamcode.robot.mechanisms.FullAutoHelper;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.FlipperController;
+import org.firstinspires.ftc.teamcode.robot.mechanisms.FullAutoHelper;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.IntakeController;
 import org.firstinspires.ftc.teamcode.robot.mechanisms.LiftController;
-import org.firstinspires.ftc.teamcode.test.MockDcMotor;
-import org.firstinspires.ftc.teamcode.test.MockServo;
+import org.firstinspires.ftc.teamcode.util.MockDcMotor;
+import org.firstinspires.ftc.teamcode.util.MockServo;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
@@ -141,6 +140,7 @@ public class FullAuto extends OpMode {
                 new LiftController(
                         new MockDcMotor("lift", telemetry),
                         new MockDcMotor("lift2", telemetry),
+                        new PIDCoefficients(5,0,2),
                         telemetry),
                 telemetry);
         }
@@ -168,6 +168,7 @@ public class FullAuto extends OpMode {
                     new LiftController(
                             hardwareMap.get(DcMotor.class, "lift"),
                             hardwareMap.get(DcMotor.class, "lift2"),
+                            new PIDCoefficients(5,0,2),
                             telemetry),
                     telemetry);
 

@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.test;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.openftc.revextensions2.ExpansionHubEx;
 
 @TeleOp
 public class runTo extends OpMode {
 
-//method, looking, loading, etc looking for block
+    public static int distance;
+
+    //method, looking, loading, etc looking for block
         //declare and initialize drive motors
         DcMotor front_right;
         DcMotor front_left;
@@ -22,30 +20,30 @@ public class runTo extends OpMode {
         public void init() {
 
             front_left = hardwareMap.get(DcMotor.class, "left_front");
-//            front_right = hardwareMap.get(DcMotor.class, "right_front");
-//            back_left = hardwareMap.get(DcMotor.class, "left_back");
-//            back_right = hardwareMap.get(DcMotor.class, "right_back");
+            front_right = hardwareMap.get(DcMotor.class, "right_front");
+            back_left = hardwareMap.get(DcMotor.class, "left_back");
+            back_right = hardwareMap.get(DcMotor.class, "right_back");
 
             front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             }
 
         @Override
         public void loop() {
             front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
-             //   front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                int skystonethresh = 384; //24" to blocks is 1125ticks
+                front_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                front_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                back_left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                back_right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                distance = 770; //24" to blocks is 1125ticks
             //383.6 per revolution
 
 

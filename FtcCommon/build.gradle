@@ -1,6 +1,10 @@
 apply plugin: 'com.android.library'
 
 android {
+
+    compileOptions {
+        targetCompatibility = 1.8
+    }
     compileSdkVersion 26
 
     defaultConfig {

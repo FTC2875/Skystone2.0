@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -40,10 +39,10 @@ public class DrivetrainController {
 
         this.telemetry = telemetry;
 
-//        front_left.setDirection(DcMotor.Direction.REVERSE);
-//        front_right.setDirection(DcMotor.Direction.FORWARD);
-//        back_left.setDirection(DcMotor.Direction.REVERSE);
-//        back_right.setDirection(DcMotor.Direction.FORWARD);
+//        front_left.setDirection(DcMotor.Direction.REVERSE); //TODO: uncomment
+        front_right.setDirection(DcMotor.Direction.REVERSE);
+        back_left.setDirection(DcMotor.Direction.REVERSE);
+        back_right.setDirection(DcMotor.Direction.REVERSE);
 
         resetEncoders();
 
@@ -273,8 +272,8 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        double min = -0.98;
-        double max = 0.98;
+        double min = -1;
+        double max = 1;
         frontLeftPower = clip(frontLeftPower, min, max);
         frontRightPower = clip(frontRightPower, min, max);
         backLeftPower = clip(backLeftPower, min, max);
@@ -299,7 +298,7 @@ public class DrivetrainController {
         telemetry.addData("drivetrain", "reset encoders");
 
         // try without encoders
-/*        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        front_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         front_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         back_left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         back_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -307,7 +306,7 @@ public class DrivetrainController {
         front_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //encoder modes for motors
         front_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         back_left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
+        back_right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void MoveLeft(int target, double power){
         frontLeftPosition = target;

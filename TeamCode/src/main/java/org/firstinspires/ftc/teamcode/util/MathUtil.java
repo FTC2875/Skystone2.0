@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.util;
 
 public class MathUtil {
     public static final double EPSILON = 1e-6;

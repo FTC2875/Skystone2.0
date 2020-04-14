@@ -43,6 +43,8 @@ public class TestMotors extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_back"),
                 telemetry);
 
+        drivetrainController.resetEncoders();
+
     //    liftController = new LiftController(
     //            hardwareMap.get(DcMotor.class, "lift"),
     //            telemetry);
@@ -67,8 +69,13 @@ public class TestMotors extends OpMode {
             drivetrainController.SetPower(0, 0, 0, 1);
             telemetry.addLine("backright on");
         }
+        else if (gamepad1.y) {
+            drivetrainController.SetPower(1,1,1,1);
+            telemetry.addLine("all on");
+        }
         else {
             drivetrainController.SetPower(0, 0, 0, 0);
+            telemetry.clear();
             telemetry.addLine("all off");
         }
 
