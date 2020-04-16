@@ -26,6 +26,9 @@ public class LiftController {
 
     PIDFController controller;
 
+    int liftinit;
+    int lift2init;
+
     public enum Direction {
         Up,
         Down
@@ -45,8 +48,8 @@ public class LiftController {
         lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //TODO: Encoder values?
         //TODO: get power coefficient so lift stays at constant height
-        double lift1position = lift1.getCurrentPosition();
-        double lift2position = lift2.getCurrentPosition();
+        liftinit = lift1.getCurrentPosition();
+        lift2init = lift2.getCurrentPosition();
 
         controller = new PIDFController(coeffs);
 
@@ -83,8 +86,26 @@ public class LiftController {
 
     public void setPower(double power) {
         telemetry.addData("LiftController", "setPower: %f", power);
+        lift1ZeroBrake();
+        lift2ZeroBrake();
         lift1.setPower(power);
         lift2.setPower(-power);
+    }
+
+    public void setPowerUp(double power) {
+        telemetry.addData("LiftController", "setPower: %f", power);
+        lift1ZeroBrake();
+        lift1.setPower(power);
+        lift2ZeroCoast();
+        lift2.setPower(0);
+    }
+
+    public void setPowerDown(double power) {
+        telemetry.addData("LiftController", "setPower: %f", power);
+        lift2ZeroBrake();
+        lift1ZeroBrake();
+        lift2.setPower(-power);
+        lift1.setPower(0);
     }
 
     public void setPowerPID(double power) {
@@ -115,6 +136,8 @@ public class LiftController {
 
     public void lift1ZeroBrake() {lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
     public void lift1ZeroCoast() {lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
+    public void lift2ZeroBrake() {lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);}
+    public void lift2ZeroCoast() {lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);}
 
     public boolean IsMoving() {
         return lift1.isBusy() || lift2.isBusy();

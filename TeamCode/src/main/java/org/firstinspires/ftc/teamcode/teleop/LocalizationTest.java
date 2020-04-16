@@ -123,6 +123,7 @@ public class LocalizationTest extends LinearOpMode {
 
             double avgvel = total / velocities.size();
 
+            /// SLOW STATE ///
             if (gamepad1.right_bumper && slowstate == 0){ powerFactor = 1; slowstate = 2;}
             if (!gamepad1.right_bumper && slowstate == 2){ slowstate = 1; }
             if (gamepad1.right_bumper && slowstate == 1){ powerFactor = 0.3; slowstate = 3; }
@@ -161,27 +162,16 @@ public class LocalizationTest extends LinearOpMode {
             if (gamepad2.a) armController.SetGripperPosition(1);
             if (gamepad2.b) armController.SetGripperPosition(0.25);
 
-            if (gamepad2.dpad_right) armController.SetLinkagePosition(0.17);
-            if (gamepad2.dpad_left) armController.SetLinkagePosition(0.63);
+            if (gamepad2.dpad_left) armController.SetLinkagePosition(0.17);
+            if (gamepad2.dpad_right) armController.SetLinkagePosition(0.63);
 
 
             /// LIFT CONTROL ///
-            //if (gamepad2.dpad_up && liftstage < 4 && liftstate == 0) {liftstage++; liftstate = 1; moveLift();}
-            //if (!gamepad2.dpad_up && !gamepad2.dpad_down) {liftstate = 0;}
-            //if (gamepad2.dpad_down && liftwstage > 0 && liftstate == 0) {liftstage--; liftstate = 1; moveLift();}
-            //if (liftposition >= -1200) {double liftinit = lift.getCurrentPosition();
-            if (gamepad2.dpad_up) lift.setPowerPID(0.5);
-            else if (gamepad2.dpad_down && gamepad2.right_trigger < 0.05) lift.setPowerPID(-0.15);
-            else if (gamepad2.right_trigger > 0.05 && !gamepad2.dpad_down) lift.setPowerPID(-0.08);
+            if (gamepad2.dpad_up) lift.setPowerUp(0.8);
+            else if (gamepad2.dpad_down && gamepad2.right_trigger < 0.05) lift.setPowerDown(-0.6);
+            else if (gamepad2.right_trigger > 0.05 && !gamepad2.dpad_down) lift.setPowerDown(-0.9);
             //TODO: LIFT STATE MACHINE FOR MAX HEIGHT
-            if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper && gamepad2.left_trigger < 0.05) lift.setPowerPID(0.0009); //resist Fg pushing down on lift
-            //}.
-            //else lift.setPower(0.05);
-
-            if(gamepad2.left_bumper && !gamepad2.dpad_down) {
-                //lift.ZeroCoast();
-                lift.setPower(0.4);
-            }
+            if (!gamepad2.dpad_up  && !gamepad2.dpad_down && !gamepad2.left_bumper && gamepad2.left_trigger < 0.05) lift.setPowerUp(0.0009); //resist Fg pushing down on lift
 
 
             expansionHub.setLedColor((int)(baseVel.getX()*6), (int)(baseVel.getY()*6), (int)(baseVel.getHeading()*6));
