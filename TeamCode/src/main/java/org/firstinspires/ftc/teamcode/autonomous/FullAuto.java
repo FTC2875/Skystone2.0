@@ -61,12 +61,14 @@ public class FullAuto extends OpMode {
     private int ticksToOtherSide = (int)(ticks*((tileWidth * 4)/wheelC)); //approx 4 tiles to other side
     private int ticksToFoundation = (int)(ticksToBlock);
     private int skystoneOffset;
+    public boolean alreadyExecuted = false;
 
     // Count of processed blocks
     private int blockCount = 0;
 
     // TODO: change testing to false
     private boolean testing = false;
+    private boolean Grabbed = false;
 
     // The robot states
     private enum RobotStates
@@ -122,7 +124,7 @@ public class FullAuto extends OpMode {
                     new MockDcMotor("right_front", telemetry),
                     new MockDcMotor("left_back", telemetry),
                     new MockDcMotor("right_back", telemetry),
-            telemetry);
+                    hardwareMap, telemetry);
 
             fullAutoHelper = new FullAutoHelper(
                 drivetrainController,
@@ -150,7 +152,7 @@ public class FullAuto extends OpMode {
                     hardwareMap.get(DcMotor.class, "right_front"),
                     hardwareMap.get(DcMotor.class, "left_back"),
                     hardwareMap.get(DcMotor.class, "right_back"),
-                    telemetry);
+                    hardwareMap, telemetry);
 
             fullAutoHelper = new FullAutoHelper(
                     drivetrainController,
@@ -192,8 +194,12 @@ public class FullAuto extends OpMode {
         switch (robotState) {
             case Initialization: {
                 // TODO: any additional initialization
-                playdroid();
-                LookForBlock();
+
+//                playdroid();
+//                LookForBlock();
+                if (!Grabbed){
+                    Grabbed = true;
+                GrabBlock();}
                 break;
             }
 
@@ -285,8 +291,7 @@ public class FullAuto extends OpMode {
         switch (cameraController.State) {
             case Undetermined: {
                 telemetry.addData("Camera", "Object Undetermined");
-                drivetrainController.BeginScanRight(0.4);
-                //TODO: crawl backward if we're too close to find it?
+                    drivetrainController.BeginScanRight(0.3);
                 break;
             }
 
@@ -337,15 +342,17 @@ public class FullAuto extends OpMode {
         telemetry.addData("Robot", "AlignWithBlock, cameracenter.x: %f", cameraController.center.x);
 
         //TODO: Align with the block by moving left and right and processing camerastate, add PID controller with center.x value
-        // to get to somewhere in between 200 to 300.
+        // to get to 320
 
-        if (cameraController.center.x > 300 ) { //&& robotState != RobotStates.PanRightToBlock
+        if (cameraController.center.x > 340 ) { //&& robotState != RobotStates.PanRightToBlock
             robotState = RobotStates.PanRightToBlock;
-            drivetrainController.BeginScanRight(0.45);
+            drivetrainController.ScanningRight = false;
+            drivetrainController.BeginScanRight(0.2);
         }
-        else if (cameraController.center.x < 200) { // && robotState != RobotStates.PanLeftToBlock
+        else if (cameraController.center.x < 280) { // && robotState != RobotStates.PanLeftToBlock
             robotState = RobotStates.PanLeftToBlock;
-            drivetrainController.BeginScanLeft(0.45);
+            drivetrainController.ScanningLeft = false;
+            drivetrainController.BeginScanLeft(0.2);
         }
         else {
             ApproachBlock();
@@ -368,7 +375,7 @@ public class FullAuto extends OpMode {
             drivetrainController.Stop();
         }
 
-        drivetrainController.BeginApproach(ticksToBlock);
+        drivetrainController.BeginApproach(0.3);
     }
 
 

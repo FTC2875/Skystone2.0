@@ -41,7 +41,7 @@ public class TestMotors extends OpMode {
                 hardwareMap.get(DcMotor.class, "right_front"),
                 hardwareMap.get(DcMotor.class, "left_back"),
                 hardwareMap.get(DcMotor.class, "right_back"),
-                telemetry);
+                hardwareMap, telemetry);
 
         drivetrainController.resetEncoders();
 

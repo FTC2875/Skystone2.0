@@ -45,18 +45,23 @@ public class ArmController {
     public double getLinkagePosition() { return linkage.getPosition(); }
 
     public void BeginGrip() {
-        // TODO implement grip
-        // gripper
+        gripper.setPosition(1);
         telemetry.addData("ArmController", "BeginGrip");
     }
 
     public void BeginRelease() {
-        // TODO implement release
+        gripper.setPosition(0.25);
         telemetry.addData("ArmController", "BeginRelease");
     }
 
-    public void BeginRaise() {
-        // TODO implement raise
-        telemetry.addData("ArmController", "BeginRaise");
+    public void extendLinkage(){
+        linkage.setPosition(0.17);
+        telemetry.addData("ArmController", "ExtendLinkage");
     }
+
+    public void retractLinkage(){
+        linkage.setPosition(0.63);
+        telemetry.addData("ArmController", "RetractLinkage");
+    }
+
 }

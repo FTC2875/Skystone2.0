@@ -113,19 +113,40 @@ public class FullAutoHelper extends Thread {
         // TODO: fix the load sequence
 
         //TODO move DT at same time
-        drivetrainController.BeginApproach(100);
+        //drivetrainController.BeginApproach(0.3);
 
-        intakeController.BeginIntake(-1, 1);
+        intakeController.BeginIntake(1, -1);
         Wait(2000);
 
+        drivetrainController.Stop();
         armController.BeginGrip();
         Wait(1000);
 
-        liftController.BeginMovingLift(12, 0.2);
-        Wait(5000);
+        intakeController.Stop();
 
-        flipperController.BeginFlip();
-        Wait(2000);
+        liftController.setPowerUp(0.4);
+        Wait(2400);
+        liftController.setPowerUp(0);
+        Wait(500);
+        armController.extendLinkage();
+        Wait(500);
+
+        liftController.setPowerDown(-0.4);
+        Wait(2400);
+
+        liftController.setPowerDown(0);
+        armController.BeginRelease();
+        Wait(1000);
+
+        liftController.setPowerUp(0.4);
+        Wait(2400);
+        liftController.setPowerUp(0);
+        Wait(300);
+        armController.retractLinkage();
+
+        Wait(500);
+        liftController.setPowerDown(-0.4);
+        Wait(2400);
 
         // liftController.BeginMovingLift(12, 0.1, LiftController.Direction.Down);
         // flipperController.BeginFlip();

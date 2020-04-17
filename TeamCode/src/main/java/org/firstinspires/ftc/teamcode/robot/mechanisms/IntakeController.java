@@ -39,6 +39,11 @@ public class IntakeController {
         intake_right.setPower(rightIntakePower);
     }
 
+    public void Stop(){
+        intake_left.setPower(0);
+        intake_right.setPower(0);
+    }
+
     public boolean IsMoving() {
         return intake_left.isBusy() || intake_right.isBusy();
     }

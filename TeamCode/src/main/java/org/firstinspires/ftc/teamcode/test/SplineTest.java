@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
+/**
+Use this to test out trajectories easily
+ **/
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -26,12 +29,9 @@ public class SplineTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        Vector2d v = new Vector2d(0, 15);
-
 
         Path path = new PathBuilder(new Pose2d(0, 0, 0))
-                .splineTo(new Pose2d(15, 15, 0))
-                .lineTo(new Vector2d(30, 15))
+                .lineTo(new Vector2d(20, 0))
                 .build();
 
 
@@ -44,7 +44,8 @@ public class SplineTest extends LinearOpMode {
 //                .lineTo(new Vector2d(0,-15))
 //                .build();
 
-        drive.followTrajectory(traj);
+        drive.followTrajectoryAsync(traj);
+        while(drive.isBusy()) {drive.update();}
 
 //        drive.turn(Math.toRadians(-45));
 
@@ -54,6 +55,11 @@ public class SplineTest extends LinearOpMode {
 //        drive.followTrajectory(
 //                drive.trajectoryBuilder(new Pose2d(25, 25, Math.toRadians(180)), true)
 //                        .splineTo(new Pose2d(0, 0, Math.toRadians(180)))
+
+
+
+
+
 //                        .build()
 //        );
     }

@@ -73,7 +73,7 @@ public class MecanumDrive extends OpMode {
                frontRight =  hardwareMap.get(DcMotor.class, "right_front"),
                backLeft = hardwareMap.get(DcMotor.class, "left_back"),
                backRight =  hardwareMap.get(DcMotor.class, "right_back"),
-                telemetry);
+                hardwareMap, telemetry);
 
         intakeController = new IntakeController(
                 hardwareMap.get(DcMotor.class, "intake1"),

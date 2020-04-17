@@ -1,10 +1,21 @@
 package org.firstinspires.ftc.teamcode.robot.drivetrain;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.path.Path;
+import com.acmerobotics.roadrunner.path.PathBuilder;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryGenerator;
+import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Hardware;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import static com.qualcomm.robotcore.util.Range.clip;
+import org.firstinspires.ftc.teamcode.robot.drivetrain.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.util.MockDcMotor;
 
 /**
  * Usage: Implements a controller for the drivetrain.
@@ -15,10 +26,10 @@ import static com.qualcomm.robotcore.util.Range.clip;
  */
 public class DrivetrainController {
 
-    private DcMotor front_left;
-    private DcMotor front_right;
-    private DcMotor back_left;
-    private DcMotor back_right;
+    private MockDcMotor front_left;
+    private MockDcMotor front_right;
+    private MockDcMotor back_left;
+    private MockDcMotor back_right;
 
     private int frontLeftPosition = 0;
     private int frontRightPosition = 0;
@@ -26,18 +37,25 @@ public class DrivetrainController {
     private int backRightPosition = 0;
     private Telemetry telemetry;
 
+    private SampleMecanumDrive drive;
+    public boolean ScanningRight = false;
+    public boolean ScanningLeft = false;
+
     public DrivetrainController(DcMotor frontLeft,
                                 DcMotor frontRight,
                                 DcMotor backLeft,
                                 DcMotor backRight,
+                                HardwareMap hardwareMap,
                                 Telemetry telemetry) {
 
-        front_left = frontLeft;
-        front_right = frontRight;
-        back_left = backLeft;
-        back_right = backRight;
+        front_left = new MockDcMotor("front_left", telemetry);
+        front_right = new MockDcMotor("front_right", telemetry);
+        back_left = new MockDcMotor("back_left", telemetry);
+        back_right = new MockDcMotor("back_right", telemetry);
 
         this.telemetry = telemetry;
+
+        drive = new SampleMecanumDrive(hardwareMap);
 
 //        front_left.setDirection(DcMotor.Direction.REVERSE); //TODO: uncomment
         front_right.setDirection(DcMotor.Direction.REVERSE);
@@ -55,11 +73,7 @@ public class DrivetrainController {
 
     public void Stop() {
         telemetry.addData("drivetrain:", "stop");
-
-        front_left.setPower(0);
-        front_right.setPower(0);
-        back_left.setPower(0);
-        back_right.setPower(0);
+        drive.setMotorPowers(0,0,0,0);
 
         frontLeftPosition = 0;
         frontRightPosition = 0;
@@ -101,27 +115,14 @@ public class DrivetrainController {
         back_right.setPower(0.2);
     }
 
-    public void BeginApproach(int targetPosition){
-        telemetry.addData("drivetrain:", "BeginApproach, targetPosition: %d", targetPosition);
-        Stop();
+    public void BeginApproach(double power){
+        telemetry.addData("drivetrain:", "BeginApproach, targetPosition: %d");
 
-        resetEncoders();
-        setPositionMode();
+            Stop();
+            Pose2d baseVel = new Pose2d(power, 0, 0);
+            drive.setDrivePower(baseVel);
 
-        frontLeftPosition = -targetPosition;
-        frontRightPosition = targetPosition;
-        backLeftPosition = -targetPosition;
-        backRightPosition = targetPosition;
-
-        front_left.setTargetPosition(-targetPosition);
-        back_left.setTargetPosition(-targetPosition);
-        front_right.setTargetPosition(targetPosition);
-        back_right.setTargetPosition(targetPosition);
-
-        front_left.setPower(-0.4); //move left until it sees it
-        front_right.setPower(0.4);
-        back_left.setPower(-0.4);
-        back_right.setPower(0.4);
+        drive.update();
     }
 
     public void BeginUnload(int targetPosition){
@@ -149,28 +150,29 @@ public class DrivetrainController {
 
     public void BeginScanRight(double powerLevel) {
         telemetry.addData("drivetrain:", "ScanRight at Power: %f", powerLevel);
-        Stop();
 
-        resetEncoders();
-        setPositionMode();
+        if (!ScanningRight) {
+            Stop();
+            ScanningRight = true;
+            Pose2d baseVel = new Pose2d(0, -powerLevel, 0);
+            drive.setDrivePower(baseVel);
+        }
 
-        front_left.setPower(-powerLevel); //this moves right
-        front_right.setPower(-powerLevel);
-        back_left.setPower(powerLevel);
-        back_right.setPower(-powerLevel);
+        drive.update();
     }
 
     public void BeginScanLeft(double powerLevel) {
         telemetry.addData("drivetrain:", "ScanLeft at Power: %f", powerLevel);
-        Stop();
 
-        resetEncoders();
-        setPositionMode();
+        if (!ScanningLeft) {
+            Stop();
+            ScanningLeft = true;
+            Pose2d baseVel = new Pose2d(0, powerLevel, 0);
+            drive.setDrivePower(baseVel);
+        }
 
-        front_left.setPower(powerLevel); //this moves left
-        front_right.setPower(-powerLevel);
-        back_left.setPower(-powerLevel); //TODO: Replace with common methods
-        back_right.setPower(powerLevel);
+        drive.update();
+
     }
 
     public void BeginTurnRight(int targetPosition) {
@@ -272,12 +274,8 @@ public class DrivetrainController {
     }
 
     public void SetPower(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower) {
-        double min = -1;
-        double max = 1;
-        frontLeftPower = clip(frontLeftPower, min, max);
-        frontRightPower = clip(frontRightPower, min, max);
-        backLeftPower = clip(backLeftPower, min, max);
-        backRightPower = clip(backRightPower, min, max);
+
+        drive.setMotorPowers(frontLeftPower,backLeftPower,backRightPower,frontRightPower);
 
         telemetry.addData("drivetrain", "setpower: %f, %f, %f, %f", frontLeftPower, frontRightPower, backLeftPower, backRightPower);
 
@@ -355,6 +353,13 @@ public class DrivetrainController {
         front_right.setPower(-power);
         back_left.setPower(power);
         back_right.setPower(power);
+    }
+
+    public void update() {
+        new Thread(() -> {
+            drive.update();
+        }).start();
+
     }
 
     public double FLPower(){ return front_left.getPower(); }
