@@ -93,7 +93,7 @@ public class LiftController {
     }
 
     public void setPowerUp(double power) {
-        telemetry.addData("LiftController", "setPower: %f", power);
+        telemetry.addData("LiftController", "setPowerUp: %f", power);
         lift1ZeroBrake();
         lift1.setPower(power);
         lift2ZeroCoast();
@@ -101,7 +101,7 @@ public class LiftController {
     }
 
     public void setPowerDown(double power) {
-        telemetry.addData("LiftController", "setPower: %f", power);
+        telemetry.addData("LiftController", "setPowerDown: %f", power);
         lift2ZeroBrake();
         lift1ZeroBrake();
         lift2.setPower(-power);

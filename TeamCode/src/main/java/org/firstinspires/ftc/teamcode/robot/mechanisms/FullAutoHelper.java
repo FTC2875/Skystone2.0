@@ -115,38 +115,17 @@ public class FullAutoHelper extends Thread {
         //TODO move DT at same time
         //drivetrainController.BeginApproach(0.3);
 
+
+
         intakeController.BeginIntake(1, -1);
         Wait(2000);
 
-        drivetrainController.Stop();
+        //drivetrainController.Stop();
         armController.BeginGrip();
         Wait(1000);
 
         intakeController.Stop();
 
-        liftController.setPowerUp(0.4);
-        Wait(2400);
-        liftController.setPowerUp(0);
-        Wait(500);
-        armController.extendLinkage();
-        Wait(500);
-
-        liftController.setPowerDown(-0.4);
-        Wait(2400);
-
-        liftController.setPowerDown(0);
-        armController.BeginRelease();
-        Wait(1000);
-
-        liftController.setPowerUp(0.4);
-        Wait(2400);
-        liftController.setPowerUp(0);
-        Wait(300);
-        armController.retractLinkage();
-
-        Wait(500);
-        liftController.setPowerDown(-0.4);
-        Wait(2400);
 
         // liftController.BeginMovingLift(12, 0.1, LiftController.Direction.Down);
         // flipperController.BeginFlip();
@@ -167,16 +146,32 @@ public class FullAutoHelper extends Thread {
         telemetry.addData("FullAutoHelper", "Unloading started");
         SetRunningState(RunningStates.Unloading);
 
-        // TODO: fix the unload sequence
+        int liftTime = 2400;
 
-        // these operations just begin the motion, therefore chain them outside
-        // liftController.BeginMovingLift(12, 0.1, LiftController.Direction.Down);
+        liftController.setPowerUp(0.4);
+        Wait(liftTime);
+        liftController.setPowerUp(0.0009);
+        Wait(500);
+        armController.extendLinkage();
+        Wait(750);
 
-        // flipperController.BeginFlip();
-        // liftController.BeginMovingLift(12, 0.2, LiftController.Direction.Up);
+        liftController.setPowerDown(-0.4);
+        Wait(liftTime);
 
+        liftController.setPowerDown(0);
+        Wait(1000);
+        armController.BeginRelease();
+        Wait(1500);
 
-        // flipperController.BeginFlip();
+        liftController.setPowerUp(0.4);
+        Wait(liftTime);
+        liftController.setPowerUp(0.0009);
+        Wait(500);
+        armController.retractLinkage();
+        Wait(750);
+        liftController.setPowerDown(-0.4);
+        Wait(liftTime);
+        liftController.setPower(0);
 
         telemetry.addData("FullAutoHelper", "Unloading finished");
         // TODO: reset to starting position

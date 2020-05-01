@@ -195,11 +195,11 @@ public class FullAuto extends OpMode {
             case Initialization: {
                 // TODO: any additional initialization
 
-//                playdroid();
-//                LookForBlock();
-                if (!Grabbed){
-                    Grabbed = true;
-                GrabBlock();}
+                playdroid();
+                LookForBlock();
+//                if (!Grabbed){
+//                    Grabbed = true;
+//                GrabBlock();}
                 break;
             }
 
@@ -413,10 +413,9 @@ public class FullAuto extends OpMode {
 
         // Drive to load the block
         if (drivetrainController.IsMoving()) {
-            drivetrainController.Stop();
-        }
+            drivetrainController.Stop(); }
 
-        drivetrainController.BeginUnload(50);
+        drivetrainController.MoveToFoundation(500);
 
         robotState = RobotStates.WaitingToDropBlock;
     }
